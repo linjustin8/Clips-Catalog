@@ -14,3 +14,5 @@ const userSchema = new mongoose.Schema({
         default: "Viewer"
     }],
 })
+
+module.exports = mongoose.model('User', userSchema)
