@@ -5,9 +5,18 @@ const clipSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    uploadDate: {
+        type: Date,
+        default: Date.now
+    },
+    uploader: { 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', 
+        required: true
+    },
     category: [{
         type: String,
-        default: ""
+        default: "General"
     }],
 })
 
