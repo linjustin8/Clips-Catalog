@@ -16,7 +16,7 @@ const clipSchema = new mongoose.Schema({
     },
     category: [{
         type: String,
-        default: "General"
+        default: ""
     }],
 })
 

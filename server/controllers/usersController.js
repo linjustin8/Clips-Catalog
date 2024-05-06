@@ -53,7 +53,7 @@ const createNewUser = asyncHandler(async (req, res) => {
 // @access Private
 
 const updateUser = asyncHandler(async (req, res) => {
-        
+    
 })
 
 
@@ -62,7 +62,7 @@ const updateUser = asyncHandler(async (req, res) => {
 // @access Private
 
 const deleteUser = asyncHandler(async (req, res) => {
-        
+    
 })
 
 
