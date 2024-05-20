@@ -1,6 +1,16 @@
+.container {
+    display: flex;
+    align-items: center;
+}
+
+.info {
+    left: 5%;
+    position: relative;
+    width: 40%
+}
+
 .bgVideo {
     position: relative;
-    left: 15%;
     mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 40%);
     -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 40%);
     overflow: hidden;
