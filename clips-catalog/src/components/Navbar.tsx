@@ -1,16 +1,18 @@
 //Navbar.tsx
 
 import React from 'react';
+import { Link } from 'react-router-dom'
 import '/logo.png'
+import './Navbar.css'
 
 
 function Navbar () {
     
     return (
         <nav className="nav">
-            <a href="/screens/auth/Welcome">
-                <img src="/logo.png"></img>
-            </a>
+            <Link to="/screens/auth/Welcome">
+                <img id="logo" src="/logo.png"></img>
+            </Link>
             
         </nav>
     )

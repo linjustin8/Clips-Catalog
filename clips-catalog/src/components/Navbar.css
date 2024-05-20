@@ -1,6 +1,18 @@
 /* Navbar.css */
 
 nav {
-    background-color: antiquewhite;
-    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #110f27;
+    color: white;
+    position: sticky;
+    top: 0;
+}
+    
+#logo {
+    position: sticky;
+    left: 2rem;
+    width: 25%;
+    padding: 0.25rem;
 }

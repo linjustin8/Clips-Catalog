@@ -1,7 +1,13 @@
-#root {
-  position: relative;
-  margin: 0 auto;
-  text-align: center;
-}
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@425&display=swap');
 
+:root {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #0f1224;
+  overflow-x: hidden;
+  font-family: "Montserrat", sans-serif;
+}
 
