@@ -21,7 +21,7 @@
     position: relative;
     line-height: 1.4;
     font-size: 36px;
-}   
+}
 
 .desc {
     position: relative;
@@ -36,13 +36,13 @@
     -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 15%, rgba(0, 0, 0, 1) 70%);
     overflow: hidden;
     z-index: -1;
+
 }
 
 video {
     position: relative;
     width: 90vw;
-    z-index: -1; 
+    z-index: -1;
     mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 1) 70%);
     -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 1) 70%);
 }
-  

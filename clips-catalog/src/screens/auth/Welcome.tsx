@@ -1,9 +1,14 @@
 // Welcome.tsx
 
 import React from 'react'
+import Button from "../../components/Button.tsx"
 import './Welcome.css'
 
 const Welcome: React.FC = () => {
+    const handleClick = () =>  {
+        console.log("button")
+    }
+    
     return  (   
         <div className="container">
             <div className="info">
@@ -13,6 +18,7 @@ const Welcome: React.FC = () => {
                 <p className="desc">
                 Dive into a community where your best moments are celebrated by a vibrant network of users.
                 </p>
+                <Button text="EXPLORE" onClick={handleClick}/>
             </div>
             <div className="bgVideo">
                 <video autoPlay muted loop>
