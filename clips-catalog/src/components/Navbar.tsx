@@ -7,7 +7,6 @@ import './Navbar.css'
 
 
 const Navbar: React.FC = () => {
-    
     return (
         <nav className="nav">
             <Link to="/screens/auth/Welcome">

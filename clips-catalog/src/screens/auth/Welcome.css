@@ -1,18 +1,37 @@
 .container {
+    position: relative;
     display: flex;
+    height: calc(100vh - 8rem);
+    width: 100vw;
 }
 
 .info {
+    position:relative;
+    width: 40%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 5rem;
+    gap: 1rem
+    /* background-color: red; */
+}
+
+.header {
     position: relative;
-    left: 10%;
-    top: 8rem;
-    width: 30%;
-    font-size: 28px;
-    line-height: 1.6;
+    line-height: 1.4;
+    font-size: 36px;
+}   
+
+.desc {
+    position: relative;
+    line-height: 1.4;
+    font-size: 18px;
 }
 
 .bgVideo {
-    position: relative;
+    position: absolute;
+    right: -15%;
     mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 15%, rgba(0, 0, 0, 1) 70%);
     -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 15%, rgba(0, 0, 0, 1) 70%);
     overflow: hidden;
