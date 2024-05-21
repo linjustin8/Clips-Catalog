@@ -2,11 +2,14 @@
 
 import React from 'react'
 import Button from "../../components/Button.tsx"
+import { useNavigate } from 'react-router-dom'
 import './Welcome.css'
 
 const Welcome: React.FC = () => {
+    const navigate = useNavigate()
+    
     const handleClick = () =>  {
-        console.log("button")
+        navigate("/videos")
     }
     
     return  (   

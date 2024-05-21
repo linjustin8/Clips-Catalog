@@ -1,11 +1,13 @@
 // Videos.tsx
 
 
-function Videos() {
+const Videos: React.FC = () => {
     
     return (
         <>
-        
+            <h1>
+                Videos
+            </h1>
         </>
     )
 }
