@@ -5,7 +5,7 @@ import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar.tsx'
 import './App.css'
 
-function App() {
+const App: React.FC = () => {
   
   return (
     <>
