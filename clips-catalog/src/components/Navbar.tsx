@@ -6,14 +6,13 @@ import '/logo.png'
 import './Navbar.css'
 
 
-function Navbar () {
+const Navbar: React.FC = () => {
     
     return (
         <nav className="nav">
             <Link to="/screens/auth/Welcome">
                 <img id="logo" src="/logo.png"></img>
             </Link>
-            
         </nav>
     )
 }

@@ -1,12 +1,14 @@
 .container {
     display: flex;
-    align-items: center;
 }
 
 .info {
-    left: 10%;
     position: relative;
-    width: 30%
+    left: 10%;
+    top: 8rem;
+    width: 30%;
+    font-size: 28px;
+    line-height: 1.6;
 }
 
 .bgVideo {
