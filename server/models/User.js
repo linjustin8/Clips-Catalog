@@ -6,6 +6,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    email : {
+        type: String, 
+        required: true
+    },
     uuid: {
         type: String,
         default: uuidv4, 
@@ -20,5 +24,9 @@ const userSchema = new mongoose.Schema({
         default: "Viewer"
     }],
 })
+
+userSchema.statics.signup = async () => {
+    
+}
 
 module.exports = mongoose.model('User', userSchema)

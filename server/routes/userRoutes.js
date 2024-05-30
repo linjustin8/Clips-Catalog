@@ -4,8 +4,10 @@ const usersController = require('../controllers/usersController')
 
 router.route('/')
     .get(usersController.getAllUsers)
-    .post(usersController.createNewUser)
     .patch(usersController.updateUser)
     .delete(usersController.deleteUser)
-    
+
+router.post('/signup', usersController.signUpUser)
+router.post('/login', usersController.loginUser)
+
 module.exports = router

@@ -9,7 +9,7 @@ import './Navbar.css'
 const Navbar: React.FC = () => {
     return (
         <nav className="nav">
-            <Link to="/screens/auth/Welcome">
+            <Link id="logoContainter"to="/screens/auth/Welcome">
                 <img id="logo" src="/logo.png"></img>
             </Link>
         </nav>
