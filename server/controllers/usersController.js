@@ -1,9 +1,6 @@
 //usersController.js
 const User = require('../models/User')
-const Clip = require('../models/Clip')
 const asyncHandler = require('express-async-handler') 
-const bcrypt = require('bcrypt') // password hashing 
-
 
 // @desc Get all users
 // @router Get /users
@@ -15,9 +12,6 @@ const getAllUsers = asyncHandler(async (req, res) => {
     }
     res.json(users)
 })
-
-
-
 
 
 // @desc Update new users
@@ -38,7 +32,6 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 module.exports = {
     getAllUsers,
-    signUpUser,
     updateUser,
     deleteUser
 }
