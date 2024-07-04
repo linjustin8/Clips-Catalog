@@ -1,19 +1,19 @@
 /* Navbar.css */
 
 nav {
-    position: sticky;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #110f27;
-    color: white;
-    top: 0;
-    z-index: 1000;
+  position: sticky;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #110f27;
+  color: white;
+  top: 0;
+  z-index: 1000;
 }
-
+    
 #logo {
-    position: relative;
-    left: 2rem;
-    width: 110px;
-    padding: 0.15rem;
+  position: relative;
+  left: 2rem;
+  width: 110px;
+  padding: 0.15rem;
 }
