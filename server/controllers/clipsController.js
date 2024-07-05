@@ -1,9 +1,8 @@
 // clipsController.js
-const Clip = require("../modelss/Clip");
+const Clip = require("../models/Clip");
 const AWS = require("aws-sdk");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
-
 
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY,
@@ -28,9 +27,16 @@ const upload = multer({
       cb(new Error("Only .mp4 and .mov files are supported"), false);
     }
   },
+  
+  
 });
 
+const remove = ();
+
+const updateCategories = ();
 
 module.exports = {
-    
-}
+    upload,
+    remove,
+    updateCategories
+};
