@@ -9,16 +9,10 @@ const jwt = require("jsonwebtoken");
 // @router POST /signup
 // @access Public
 const signup = asyncHandler(async (req, res) => {
-  const { username, email, uuid, password, roles } = req.body;
+  const { username, email, password } = req.body;
 
   // confirm data
-  if (
-    !username ||
-    !password ||
-    !uuid ||
-    !Array.isArray(roles) ||
-    !roles.length
-  ) {
+  if (!username || !password || !email) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -30,7 +24,7 @@ const signup = asyncHandler(async (req, res) => {
 
   // Hash password
   const hashedPwd = await bcrypt.hash(password, 10); // 10 salt rounds
-  const userObject = { username, uuid, password: hashedPwd, roles };
+  const userObject = { username: username, email: email, password: hashedPwd };
 
   // create and store user object
   const user = await User.create(userObject);

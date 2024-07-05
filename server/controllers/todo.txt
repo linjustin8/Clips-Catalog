@@ -1,10 +1,13 @@
-- find a way to delete clips from the bucket while also verifying the remover
-    of the clip if authorized to do so
-    
+
 - make sure the upload function for the clip is utilizing the clip model 
     previously created
+    
+- make sure the clip uploaded isn't a massive file
 
 - setup function for user to categorize the clip
 
 - set up routing for the clipsController
+  
+- find a way to delete clips from the bucket while also verifying the remover
+    of the clip if authorized to do so
     

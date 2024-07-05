@@ -20,6 +20,10 @@ const clipSchema = new mongoose.Schema({
       default: "",
     },
   ],
+  s3Url: {
+    type: String,
+    required: true,
+  }
 });
 
 module.exports = mongoose.model("Clip", clipSchema);
