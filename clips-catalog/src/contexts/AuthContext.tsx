@@ -1,5 +1,11 @@
 // AuthContext.tsx
-import React, { createContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  ReactNode,
+} from "react";
 import axios from "axios";
 
 interface User {
@@ -46,17 +52,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const signup = async ({ username, email, password, roles }: SignupParams) => {
-    const response = await axios.post("http://localhost:5000/users/signup", {
-      username,
-      email,
-      password,
-      roles,
-    });
-    const token = response.data.token;
-    localStorage.setItem("token", token);
-    const userData: User = response.data.user; // Assuming the backend returns user data
+    const response = await axios.post(
+      "http://localhost:5000/users/signup",
+      {
+        username,
+        email,
+        password,
+        roles,
+      },
+      { withCredentials: true }
+    );
+    const userData: User = response.data.user;
     setUser(userData);
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   };
 
   const login = async (username: string, password: string) => {
@@ -64,17 +71,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       username,
       password,
     });
-    const token = response.data.token;
-    localStorage.setItem("token", token);
     const userData: User = response.data.user;
     setUser(userData);
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
+  const logout = async () => {
+    await axios.post("http://localhost:5000/users/logout");
     setUser(null);
-    delete axios.defaults.headers.common["Authorization"];
   };
 
   return (
@@ -82,4 +85,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
+};
+
+export const useAuth = () => {
+  const context = React.useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };
