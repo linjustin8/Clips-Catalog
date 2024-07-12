@@ -85,14 +85,28 @@ const upload = asyncHandler(async (req, res) => {
     }
       
     storeClip(file.buffer, key, async (err, data) => {
-      
+      if (err) {
+        return res.status(400).send({ message: "Upload failed", error: err.message });
+      }
+
+      const s3Url = `https://${data.bucket}.s3.amazonaws.com/${data.key}`;
+
+      const clip = new Clip({
+        title,
+        uploader,
+        category,
+        s3Url,
+      });
+
+      await clip.save();
+      res.send({
+        message: 'File uploaded and compressed successfully',
+        url: s3Url,
+        clipId: clip._id,
+      });
     });
-    
   });
-  
 });
-
-
 
 const remove = ();
 
