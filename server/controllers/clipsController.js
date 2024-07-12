@@ -83,8 +83,10 @@ const upload = asyncHandler(async (req, res) => {
     if (err) {
       return res.status(400).send({ message: "Upload failed", error: err.message });
     }
-    
-    storeClip(file.buffer, )
+      
+    storeClip(file.buffer, key, async (err, data) => {
+      
+    });
     
   });
   
