@@ -1,8 +1,4 @@
-
-- make sure the upload function for the clip is utilizing the clip model 
-    previously created
-    
-- make sure the clip uploaded isn't a massive file
+- figure out how to attach user ObjectID to the clip the user uploaded
 
 - setup function for user to categorize the clip
 

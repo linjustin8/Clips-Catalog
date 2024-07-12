@@ -1,8 +1,7 @@
 // clipsController.js
 const Clip = require("../models/Clip");
 const AWS = require("aws-sdk");
-const multer = require("multer");
-const multerS3 = require("multer-s3");
+const asyncHandler = require("express-async-handler");
 require ("dotenv").config();
 
 AWS.config.update({
@@ -69,25 +68,29 @@ const storeClip = (buffer, key, callback) => {
     });
 };
 
-
-const upload = multer({
-  storage: multer.memoryStorage(),
-  fileFilter: (req, file, cb) => {
-    const filetypes = /mp4|mov/;
-    const mimetype = filetypes.test(file.mimetype);
-    const extname = filetypes.test(
-      file.originalname.split(".").pop().toLowerCase()
-    );
-
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      cb(new Error("Only .mp4 and .mov files are supported"), false);
-    }
-  },
+const upload = asyncHandler(async (req, res) => {
+  const { title, category } = req.body;
+  const file = req.file;
+  const uploader = req.userId;
   
+  if (!file) {
+    return res.status(400).send({ message: 'No file uploaded or file type not allowed.' });
+  }
+  
+  const key = `videos/${Date.now()}_${path.basename(file.originalname)}`;
+  
+  checkDuration(file.buffer, 30, (err) => {
+    if (err) {
+      return res.status(400).send({ message: "Upload failed", error: err.message });
+    }
+    
+    storeClip(file.buffer, )
+    
+  });
   
 });
+
+
 
 const remove = ();
 
