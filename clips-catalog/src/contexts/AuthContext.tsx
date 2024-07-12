@@ -1,17 +1,10 @@
 // AuthContext.tsx
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  ReactNode,
-  useContext,
-} from "react";
+import React, { createContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
 
 interface User {
   username: string;
   email: string;
-  uuid: string;
   password: string;
   roles: Array<string>;
 }
@@ -40,11 +33,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      // Optionally verify token with backend and set user state
-    }
+    const verifyAuth = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/users/me");
+        setUser(response.data.user);
+      } catch (err) {
+        console.log("User is not authenticated", err);
+      }
+    };
+
+    verifyAuth();
   }, []);
 
   const signup = async ({ username, email, password, roles }: SignupParams) => {

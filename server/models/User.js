@@ -10,11 +10,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  uuid: {
-    type: String,
-    default: uuidv4,
-    unique: true,
-  },
   password: {
     type: String,
     required: true,

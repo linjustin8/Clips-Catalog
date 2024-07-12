@@ -6,6 +6,8 @@ import "/logo.png";
 import "./Navbar.css";
 
 const Navbar: React.FC = () => {
+  
+  
   return (
     <nav className="nav">
       <Link id="logoContainter" to="/screens/auth/Welcome">

@@ -7,3 +7,7 @@
 - find a way to delete clips from the bucket while also verifying the remover
     of the clip if authorized to do so
     
+- see if express asyncHandler could be appropiately used for process of creating 
+    the clips and if so, change the errorHandler middleware to match it
+    
+    
