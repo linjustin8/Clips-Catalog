@@ -14,7 +14,7 @@ const clipSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  category: [
+  categories: [
     {
       type: String,
       default: "",
