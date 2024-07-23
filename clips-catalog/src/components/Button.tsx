@@ -11,4 +11,6 @@ const Button: React.FC<IButtonProps> = ({ text, onClick }) => {
   return <button onClick={onClick}>{text}</button>;
 };
 
+
+
 export default Button;

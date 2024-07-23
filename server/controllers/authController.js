@@ -134,15 +134,14 @@ const logout = (req, res) => {
   res.json({ message: "Cookie cleared" });
 };
 
-
 const verifyAuth = (req, res) => {
   const token = req.cookie.jwt;
-  if(!token) {
-    return res.status(401).json({ message: "Not authenticated"});
+  if (!token) {
+    return res.status(401).json({ message: "Not authenticated" });
   }
-  
+
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-    if(err) {
+    if (err) {
       return res.status(401).json({ message: "Not authenticated" });
     }
     const user = {
@@ -150,7 +149,7 @@ const verifyAuth = (req, res) => {
       username: decoded.UserInfo.username,
       roles: decoded.UserInfo.roles,
     };
-    response.json({ user })
+    response.json({ user });
   });
 };
 
@@ -159,5 +158,5 @@ module.exports = {
   login,
   refresh,
   logout,
-  verifyAuth
+  verifyAuth,
 };

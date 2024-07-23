@@ -1,11 +1,5 @@
 // AuthContext.tsx
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useContext,
-  ReactNode,
-} from "react";
+import React, { createContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
 
 interface User {
@@ -19,7 +13,6 @@ interface SignupParams {
   username: string;
   email: string;
   password: string;
-  roles: Array<string>;
 }
 
 interface AuthContextType {
@@ -51,14 +44,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     verifyAuth();
   }, []);
 
-  const signup = async ({ username, email, password, roles }: SignupParams) => {
+  const signup = async ({ username, email, password }: SignupParams) => {
     const response = await axios.post(
       "http://localhost:5000/users/signup",
       {
         username,
         email,
         password,
-        roles,
       },
       { withCredentials: true }
     );
@@ -89,7 +81,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 export const useAuth = () => {
   const context = React.useContext(AuthContext);
-  if (context === undefined) {
+  if (context === undefined) {  
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
