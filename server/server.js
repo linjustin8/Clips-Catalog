@@ -11,7 +11,7 @@ const connectDB = require("./config/connection");
 const mongoose = require("mongoose");
 const { logEvents } = require("./middleware/logger");
 
-const PORT = process.env.PORT || 3500;
+const PORT = process.env.PORT || 5000;
 console.log(process.env.NODE_ENV);
 
 connectDB();
@@ -29,7 +29,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "./public")));
 
 app.use("/", require("./routes/root"));
-app.use("/users", require("./routes/userRoutes.js"));
+app.use("/user", require("./routes/userRoutes.js"));
 
 app.all("*", (req, res) => {
   res.status(404);

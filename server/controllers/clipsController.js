@@ -167,6 +167,7 @@ const remove = asyncHandler(async (req, res) => {
 
 module.exports = {
   upload,
-  remove,
+  getUserClips,
   updateCategories,
+  remove,
 };

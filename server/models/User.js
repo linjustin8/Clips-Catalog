@@ -14,12 +14,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  roles: [
-    {
-      type: String,
-      default: "Viewer",
-    },
-  ],
+  roles: {
+    type: [String],
+    default: ["Viewer"],
+  },
+  signupDate: {
+    type: Date,
+    default: Date.now,
+  }
 });
 
 userSchema.statics.signup = async () => {};

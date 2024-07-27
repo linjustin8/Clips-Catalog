@@ -5,6 +5,40 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt"); // password hashing
 const jwt = require("jsonwebtoken");
 
+// @desc Helper function
+const authUser = async (res, user, status, message) => {
+  const userInfo = {
+    id: user._id,
+    username: user.username,
+    roles: user.roles,
+  };
+
+  const accessToken = jwt.sign(
+    {
+      UserInfo: userInfo,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: "15m" }
+  );
+
+  const refreshToken = jwt.sign(
+    { username: user.username },
+    process.env.REFRESH_TOKEN_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  // Create secure cookie with refresh token
+  res
+    .cookie("jwt", refreshToken, {
+      httpOnly: true, //accessible only by web server
+      secure: true, //https
+      sameSite: "None", //cross-site cookie
+      maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiry: set to match rT
+    })
+    .status(status)
+    .json({ message, UserInfo: userInfo });
+};
+
 // @desc Signup new users
 // @router POST /signup
 // @access Public
@@ -28,8 +62,9 @@ const signup = asyncHandler(async (req, res) => {
 
   // create and store user object
   const user = await User.create(userObject);
+
   if (user) {
-    res.status(201).json({ message: `New user ${username} created` });
+    await authUser(res, user, 201, `Created user ${username}`);
   } else {
     res.status(400).json({ message: "Invalid user data received" });
   }
@@ -45,44 +80,17 @@ const login = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  const foundUser = await User.findOne({ username }).exec();
+  const user = await User.findOne({ username }).exec();
 
-  if (!foundUser) {
+  if (!user) {
     return res.status(401).json({ message: "User not found" });
   }
 
-  const match = await bcrypt.compare(password, foundUser.password);
+  const match = await bcrypt.compare(password, user.password);
 
   if (!match) return res.status(401).json({ message: "Unauthorized" });
 
-  const accessToken = jwt.sign(
-    {
-      UserInfo: {
-        id: foundUser._id,
-        username: foundUser.username,
-        roles: foundUser.roles,
-      },
-    },
-    process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: "15m" }
-  );
-
-  const refreshToken = jwt.sign(
-    { username: foundUser.username },
-    process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "7d" }
-  );
-
-  // Create secure cookie with refresh token
-  res.cookie("jwt", refreshToken, {
-    httpOnly: true, //accessible only by web server
-    secure: true, //https
-    sameSite: "None", //cross-site cookie
-    maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiry: set to match rT
-  });
-
-  // Send accessToken containing username and roles
-  res.json({ accessToken });
+  await authUser(res, user, 200, `Logged in user ${username}`);
 });
 
 // @desc Refresh
@@ -124,32 +132,38 @@ const refresh = (req, res) => {
   );
 };
 
-// @desc Logout
+// @desc Logout user by just clearing cookies
 // @route POST /auth/logout
-// @access Public - just to clear cookie if exists
+// @access Public
 const logout = (req, res) => {
   const cookies = req.cookies;
-  if (!cookies?.jwt) return res.sendStatus(204); //No content
-  res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
-  res.json({ message: "Cookie cleared" });
+  if (!cookies?.jwt) {
+    return res.sendStatus(204).json({ message: "No user found" }); //No content
+  }
+  res
+    .clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true })
+    .json({ message: "Cookie cleared" });
 };
 
+// @desc 
+// @route 
+// @access
 const verifyAuth = (req, res) => {
-  const token = req.cookie.jwt;
+  const token = req.cookies.jwt;
   if (!token) {
-    return res.status(401).json({ message: "Not authenticated" });
+    return res.status(401).json({ message: "Not authenticated1" });
   }
 
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+  jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(401).json({ message: "Not authenticated" });
+      return res.status(401).json({ message: "Not authenticated2", err: err });
     }
     const user = {
       id: decoded.UserInfo.id,
       username: decoded.UserInfo.username,
       roles: decoded.UserInfo.roles,
     };
-    response.json({ user });
+    res.json({ user });
   });
 };
 
