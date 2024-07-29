@@ -2,8 +2,10 @@
 
 const User = require("../models/User");
 const asyncHandler = require("express-async-handler");
-const bcrypt = require("bcrypt"); // password hashing
+const bcrypt = require("bcrypt");
+const authAccess = require("../middleware/verifyJWT");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 // @desc Helper function
 const authUser = async (res, user, status, message) => {
@@ -36,7 +38,7 @@ const authUser = async (res, user, status, message) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiry: set to match rT
     })
     .status(status)
-    .json({ message, UserInfo: userInfo });
+    .json({ UserInfo: userInfo, accessToken: accessToken});
 };
 
 // @desc Signup new users
@@ -148,24 +150,16 @@ const logout = (req, res) => {
 // @desc 
 // @route 
 // @access
-const verifyAuth = (req, res) => {
-  const token = req.cookies.jwt;
-  if (!token) {
-    return res.status(401).json({ message: "Not authenticated1" });
-  }
-
-  jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: "Not authenticated2", err: err });
-    }
+const verifyAuth = asyncHandler(async (req, res) => {
+  await authAccess(req, res, () => {
     const user = {
-      id: decoded.UserInfo.id,
-      username: decoded.UserInfo.username,
-      roles: decoded.UserInfo.roles,
-    };
+      id: req.userId,
+      username: req.username,
+      roles: req.roles,
+    }
     res.json({ user });
   });
-};
+});
 
 module.exports = {
   signup,

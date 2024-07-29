@@ -17,6 +17,7 @@ interface SignupParams {
 
 interface AuthContextType {
   user: User | null;
+  accessToken: string | null;
   signup: (params: SignupParams) => Promise<void>;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
@@ -30,6 +31,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [accessToken, setAccessToken] = useState(null);
 
   useEffect(() => {
     const verifyAuth = async () => {
@@ -56,6 +58,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     );
     const userData: User = response.data.user;
     setUser(userData);
+    setAccessToken(response.data.accessToken);
   };
 
   const login = async (username: string, password: string) => {
@@ -65,15 +68,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     });
     const userData: User = response.data.user;
     setUser(userData);
+    setAccessToken(response.data.accessToken);
   };
 
   const logout = async () => {
     await axios.post("http://localhost:5000/users/logout");
     setUser(null);
+    setAccessToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, signup, login, logout }}>
+    <AuthContext.Provider value={{ user, accessToken, signup, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

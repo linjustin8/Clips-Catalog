@@ -1,6 +1,6 @@
 // App.tsx
-import React, { useEffect } from "react";
-import { AuthProvider, useAuth } from "./contexts/AuthContext.tsx";
+import React from "react";
+import { AuthProvider } from "./contexts/AuthContext.tsx";
 import Welcome from "./screens/auth/Welcome.tsx";
 import Videos from "./screens/videos/Videos.tsx";
 import { Routes, Route } from "react-router-dom";
