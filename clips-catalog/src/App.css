@@ -9,5 +9,9 @@
   background-color: #0f1224;
   overflow-x: hidden;
   font-family: "Montserrat", sans-serif;
+  
 }
 
+button {
+  font-family: "Montserrat", sans-serif;
+}

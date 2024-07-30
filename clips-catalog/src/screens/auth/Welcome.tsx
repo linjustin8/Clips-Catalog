@@ -1,16 +1,11 @@
 // Welcome.tsx
 
 import React from "react";
-import Button from "../../components/Button.tsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import "./Welcome.css";
 
 const Welcome: React.FC = () => {
   const navigate = useNavigate();
-
-  const handleClick = () => {
-    navigate("/videos");
-  };
 
   return (
     <div className="container">
@@ -22,9 +17,9 @@ const Welcome: React.FC = () => {
           Dive into a community where your best moments are celebrated by a
           vibrant network of users.
         </p>
-        <Button text="EXPLORE" onClick={handleClick} />
+        <button id="explore-button" onClick={() => {navigate("/videos")}}>EXPLORE</button>
       </div>
-      <div className="bgVideo">
+      <div className="bg-video">
         <video autoPlay muted loop>
           <source src="/background_video.mp4" />
         </video>

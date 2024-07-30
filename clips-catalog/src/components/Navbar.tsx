@@ -1,31 +1,20 @@
 //Navbar.tsx
 
-import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, ReactNode, use } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-regular-svg-icons/faUser";
 import "/logo.png";
 import "./Navbar.css";
 
-const LoggedIn: React.FC = () => {
-  
-  return (
-    <>
-      
-    </>
-  );
-};
+interface NavbarProps {
+  children: ReactNode;
+}
 
-const LoggedOut: React.FC = () => {
-  
-  return (
-    <>
-      
-    </>
-  );
-};
-
-const Navbar: React.FC = () => {
+const Navbar: React.FC<NavbarProps> = ({ children }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!user) {
@@ -34,15 +23,27 @@ const Navbar: React.FC = () => {
       console.log(`User ${user.username} has logged in`);
     }
   }, [user]);
-  
+
   return (
     <nav className="nav">
-      <Link id="logoContainter" to="/screens/auth/Welcome">
-        <img id="logo" src="/logo.png"></img>
-      </Link>
-      {user ? <LoggedIn /> : <LoggedOut />}
+      <ul>
+        <li id="logoContainer">
+          <Link to="/screens/auth/Welcome">
+            <img id="logo" src="/logo.png" />
+          </Link>
+        </li>
+        <li className="nav-buttons">
+          <button id="videos-button" onClick={() => {navigate("/videos")}}>VIDEOS</button>
+        </li>
+        
+      </ul>
+      {children}
     </nav>
   );
+};
+
+const DropdownMenu: React.FC = () => {
+  return <></>;
 };
 
 export default Navbar;

@@ -136,7 +136,7 @@ const refresh = (req, res) => {
 
 // @desc Logout user by just clearing cookies
 // @route POST /auth/logout
-// @access Public
+// @access Private
 const logout = (req, res) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) {
@@ -147,9 +147,9 @@ const logout = (req, res) => {
     .json({ message: "Cookie cleared" });
 };
 
-// @desc 
-// @route 
-// @access
+// @desc verifies if the user is logged in
+// @route GET /users/me
+// @access Private
 const verifyAuth = asyncHandler(async (req, res) => {
   await authAccess(req, res, () => {
     const user = {

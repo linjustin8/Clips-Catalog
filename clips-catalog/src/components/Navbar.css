@@ -3,17 +3,57 @@
 nav {
   position: sticky;
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   background-color: #110f27;
   color: white;
   top: 0;
   z-index: 1000;
+  padding-left: 5rem;
+  padding-right: 5rem;
+  height: 60px;
 }
-    
+
+ul {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 2.5rem;
+}
+
+#logoContainer {
+  align-items: center;
+  height: 100%;
+}
+
 #logo {
-  position: relative;
-  left: 2rem;
-  width: 110px;
-  padding: 0.15rem;
+  max-height: 100%;
+  width: auto;
+}
+
+.nav-buttons {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  font-size: 120%;
+  font-weight: bold;
+  transition: 0.1s ease-in;
+  cursor: pointer;
+  user-select: none;
+}
+
+.nav-buttons:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 0.5px #ffffff, 0 0 0.5px #ffffff, 0 0 0.5px #ffffff;
+}
+
+#videos-button {
+  all: unset;
+  height: 100%;
+  padding: 0 1rem;
 }
