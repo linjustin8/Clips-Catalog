@@ -6,28 +6,29 @@ nav {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  background-color: #110f27;
+  background-color: #110f27; 
   color: white;
   top: 0;
   z-index: 1000;
   padding-left: 5rem;
-  padding-right: 5rem;
+  padding-right: 4rem;
   height: 60px;
 }
 
 ul {
   height: 100%;
+  width: 100%;
   display: flex;
   align-items: center;
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 2.5rem;
 }
 
 #logoContainer {
   align-items: center;
   height: 100%;
+  padding-right: 2.5rem;
 }
 
 #logo {
@@ -35,25 +36,90 @@ ul {
   width: auto;
 }
 
-.nav-buttons {
+.nav-button-container {
   display: flex;
   align-items: center;
   height: 100%;
-  width: 100%;
-  font-size: 120%;
+  padding: 0;
+  border-radius: 5%;
+  font-size: 110%;
   font-weight: bold;
-  transition: 0.1s ease-in;
+  transition: 0.2s ease-in;
   cursor: pointer;
   user-select: none;
 }
 
-.nav-buttons:hover {
+.nav-button-container:not(.github):not(.sign-in):not(.get-started):hover {
   background-color: rgba(0, 0, 0, 0.5);
-  text-shadow: 0 0 0.5px #ffffff, 0 0 0.5px #ffffff, 0 0 0.5px #ffffff;
+  transform: scale(1.005);
 }
 
-#videos-button {
+.nav-button {
   all: unset;
   height: 100%;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
 }
+
+.github {
+  height: 60%;
+  margin-left: auto;
+  margin-right: 3rem;
+  border: 2px solid #6c6c6c;
+  border-radius: 15px;
+  background-color: #201b50;
+  padding: 3px;
+  transition: all 0.3 ease;
+}
+
+.github:not(#github-text):hover {
+  background-color: rgba(32, 27, 80, 1);
+  transform: scale(1.01);
+}
+ 
+.github:active {
+  background-color: rgb(27, 22, 69);
+  transform: scale(0.98);
+}
+ 
+.github-button {
+  display: flex;
+  width: 5rem;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;   
+}
+
+#github-logo {
+  height: 65%;
+  padding-left: 0.8rem;
+}
+
+.sign-in {
+  height: 70%;
+  margin: 0.5rem;
+  border: 2px solid #2a2f41;
+  border-radius: 5px;
+  transition: all 0.2 ease;
+}
+
+.sign-in:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.si-button, .gs-button {
+  padding: 0 0.75rem;
+}
+
+.get-started {
+  height: 70%;
+  border: 2px solid #6c6c6c;
+  border-radius: 5px;
+  background-color: #4a3eb9;
+  transition: all 0.2 ease;
+}
+
+.get-started:hover {
+  background-color: #4a3eb999
+}
+

@@ -21,7 +21,7 @@ const Welcome: React.FC = () => {
       </div>
       <div className="bg-video">
         <video autoPlay muted loop>
-          <source src="/background_video.mp4" />
+          <source src="background_video.mp4" />
         </video>
       </div>
     </div>

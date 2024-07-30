@@ -9,6 +9,7 @@
   position: relative;
   width: 37.5%;
   height: 100%;
+  top: -2rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -29,21 +30,23 @@
 }
 
 #explore-button {
-  width: 55%;
-  margin-top: 6rem;
+  width: 18rem;
+  margin-top: 5rem;
   margin-left: 1rem;
   padding: 0.5rem;
   font-size: 32px;
   font-weight: bolder;
   border-radius: 30px;
-  background-color: #7585b3;
-  box-shadow: 0px 0px 5px #7181ae, 0px 0px 5px #7989b8;
+  background-color: #1d2c55;
+  border-width: 0; 
+  border-style: solid;
+  box-shadow: 0px 0px 5px #0b1448;
   transition: all 0.3s ease;
 }
 
 #explore-button:hover {
-  box-shadow: 0px 0px 10px #7181ae, 0px 0px 10px #7989b8;
-  transform: scale(1.01);
+  box-shadow: 0px 0px 15px #0b1448;
+  transform: scale(1.005);
 }
 
 .bg-video {

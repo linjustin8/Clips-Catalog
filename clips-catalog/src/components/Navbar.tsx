@@ -1,18 +1,16 @@
 //Navbar.tsx
 
-import React, { useState, useEffect, ReactNode, use } from "react";
+import React, { useState, useEffect, ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-regular-svg-icons/faUser";
+import { faUser } from "@fortawesome/free-regular-svg-icons";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import "/logo.png";
 import "./Navbar.css";
 
-interface NavbarProps {
-  children: ReactNode;
-}
 
-const Navbar: React.FC<NavbarProps> = ({ children }) => {
+const Navbar: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -32,12 +30,33 @@ const Navbar: React.FC<NavbarProps> = ({ children }) => {
             <img id="logo" src="/logo.png" />
           </Link>
         </li>
-        <li className="nav-buttons">
-          <button id="videos-button" onClick={() => {navigate("/videos")}}>VIDEOS</button>
+        <li className="nav-button-container">
+          <button className="nav-button" onClick={() => {navigate("/videos")}}>Videos</button>
         </li>
+        <li className="nav-button-container">
+          <button className="nav-button" onClick={() => {navigate("/videos")}}>Upload</button>
+        </li>
+        <li className="nav-button-container github" onClick={() => {window.open('https://github.com/linjustin8/Clips-Catalog', '_blank')}}>
+          <button className="nav-button github-button">
+            <div id="github-text">GitHub</div>
+            <FontAwesomeIcon icon={faGithub} id="github-logo" />
+          </button>
+        </li>
+        { !user ? (
+          <>
+          <li className="nav-button-container sign-in">
+            <button className="nav-button si-button">SIGN IN</button>
+          </li>
+          <li className="nav-button-container get-started">
+            <button className="nav-button gs-button">GET STARTED</button>
+          </li>
+          </>
+        ) : (
+          <>
+          </>
+        )}
         
       </ul>
-      {children}
     </nav>
   );
 };
