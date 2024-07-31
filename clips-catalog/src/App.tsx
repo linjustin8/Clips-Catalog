@@ -1,21 +1,36 @@
 // App.tsx
-import React from "react";
-import { AuthProvider } from "./contexts/AuthContext.tsx";
+import React, { useState, useEffect, ReactElement } from "react";
+import { useAuth } from "./contexts/AuthContext.tsx";
 import Welcome from "./screens/auth/Welcome.tsx";
+import Login from "./screens/auth/Login.tsx";
+import Signup from "./screens/auth/Signup.tsx";
 import Videos from "./screens/videos/Videos.tsx";
-import { Routes, Route } from "react-router-dom";
+import Upload from "./screens/videos/Upload.tsx";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar.tsx";
 
-
 const App: React.FC = () => {
+  const { user } = useAuth();
+  const [auth, setAuth] = useState(false);
+
+  useEffect(() => { // setting initial condition for if user is logged in
+    setAuth(!!user);
+  }, [user]);
+
+  
   return (
-    <AuthProvider>
+    <>
       <Navbar />
       <Routes>
-        <Route path="/videos" element={<Videos />} />
         <Route path="/*" element={<Welcome />} />
+        <Route path="/welcome" element={<Welcome />} />
+        <Route path="/videos" element={<Videos />} />
+        <Route path="/upload" element={<Upload />} />
+        <Route path="/signup" element={auth ? <Navigate to="/welcome" /> : <Signup />} /> 
+        {/* making sure that users already logged in are unable to signup or login*/}
+        <Route path="/login" element={auth ? <Navigate to="/welcome" /> : <Login />} />
       </Routes>
-    </AuthProvider>
+    </>
   );
 };
 export default App;

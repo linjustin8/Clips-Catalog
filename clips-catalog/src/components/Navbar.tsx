@@ -26,15 +26,15 @@ const Navbar: React.FC = () => {
     <nav className="nav">
       <ul>
         <li id="logoContainer">
-          <Link to="/screens/auth/Welcome">
+          <button className="nav-button" onClick={() => {navigate("/Welcome")}}>
             <img id="logo" src="/logo.png" />
-          </Link>
+          </button>
         </li>
         <li className="nav-button-container">
           <button className="nav-button" onClick={() => {navigate("/videos")}}>Videos</button>
         </li>
         <li className="nav-button-container">
-          <button className="nav-button" onClick={() => {navigate("/videos")}}>Upload</button>
+          <button className="nav-button" onClick={() => {navigate("/upload")}}>Upload</button>
         </li>
         <li className="nav-button-container github" onClick={() => {window.open('https://github.com/linjustin8/Clips-Catalog', '_blank')}}>
           <button className="nav-button github-button">
@@ -45,10 +45,10 @@ const Navbar: React.FC = () => {
         { !user ? (
           <>
           <li className="nav-button-container sign-in">
-            <button className="nav-button si-button">SIGN IN</button>
+            <button className="nav-button si-button" onClick={() => {navigate("/login")}}>SIGN IN</button>
           </li>
           <li className="nav-button-container get-started">
-            <button className="nav-button gs-button">GET STARTED</button>
+            <button className="nav-button gs-button" onClick={() => {navigate("/signup")}}>GET STARTED</button>
           </li>
           </>
         ) : (

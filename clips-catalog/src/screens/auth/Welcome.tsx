@@ -1,12 +1,12 @@
 // Welcome.tsx
 
-import React from "react";
-import { useNavigate} from "react-router-dom";
+import React, { useRef, useEffect} from "react";
+import { useNavigate } from "react-router-dom";
 import "./Welcome.css";
 
 const Welcome: React.FC = () => {
   const navigate = useNavigate();
-
+  
   return (
     <div className="container">
       <div className="info">

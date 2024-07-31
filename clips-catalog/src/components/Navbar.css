@@ -29,6 +29,7 @@ ul {
   align-items: center;
   height: 100%;
   padding-right: 2.5rem;
+  cursor: pointer;
 }
 
 #logo {
