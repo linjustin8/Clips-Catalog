@@ -35,6 +35,12 @@ ul {
 #logo {
   max-height: 100%;
   width: auto;
+  filter: brightness(0) invert(1);
+  transition: 0.2s ease-in-out;
+}
+
+#logo:hover {
+  filter: none;
 }
 
 .nav-button-container {
