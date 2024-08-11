@@ -1,0 +1,42 @@
+/* Auth.css */
+
+.form-container {
+  position: relative;
+  display: flex;
+  height: calc(100vh - 60px);
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #1b183f;
+  padding: 1.5rem;
+  gap: 1.5rem;
+  height: 45%;
+  width: 40%;
+}
+
+.header {
+  font-weight: 800; 
+}
+
+input {
+  font-size: 1.5rem;
+  padding: 0.25rem;
+  border: none;
+  background: none;
+  border-bottom: rgb(174, 174, 174) 2px solid;
+  height: 20%;
+  width: 80%;
+}
+
+input:focus {
+  outline: none;
+  border-bottom: 2px solid white;
+  box-shadow: 0 1px 0 0 rgb(167, 167, 167);
+}

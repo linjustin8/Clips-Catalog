@@ -25,8 +25,18 @@ const Navbar: React.FC = () => {
     }
   }, [user]);
   
+  if(currentPage === "/login" || currentPage === "/signup") {// if current page is on login or signup
+    return (
+      <nav className="solo-logo">
+        <button className="nav-button" onClick={() => {navigate("/Welcome")}}>
+            <img id="logo" src="/logo_fill.png" />
+        </button>
+      </nav>
+    );
+  };
+  
   return (
-    <nav className="nav">
+    <nav>
       <ul>
         <li id="logoContainer">
           <button className="nav-button" onClick={() => {navigate("/Welcome")}}>
@@ -34,10 +44,14 @@ const Navbar: React.FC = () => {
           </button>
         </li>
         <li className="nav-button-container">
-          <button className="nav-button" onClick={() => {navigate("/videos")}}>Videos</button>
+          <button className="nav-button" onClick={() => {navigate("/videos")}}>
+            Videos
+          </button>
         </li>
         <li className="nav-button-container">
-          <button className="nav-button" onClick={() => {navigate("/upload")}}>Upload</button>
+          <button className="nav-button" onClick={() => {navigate("/upload")}}>
+            Upload
+          </button>
         </li>
         <li className="nav-button-container github" onClick={() => {window.open('https://github.com/linjustin8/Clips-Catalog', '_blank')}}>
           <button className="nav-button github-button">
@@ -48,10 +62,14 @@ const Navbar: React.FC = () => {
         { !user ? (
           <>
             <li className="nav-button-container sign-in">
-              <button className="nav-button si-button" onClick={() => {navigate("/login")}}>SIGN IN</button>
+              <button className="nav-button si-button" onClick={() => {navigate("/login")}}>
+                SIGN IN
+              </button>
             </li>
             <li className="nav-button-container get-started">
-              <button className="nav-button gs-button" onClick={() => {navigate("/signup")}}>GET STARTED</button>
+              <button className="nav-button gs-button" onClick={() => {navigate("/signup")}}>
+                GET STARTED
+              </button>
             </li>
           </>
         ) : (

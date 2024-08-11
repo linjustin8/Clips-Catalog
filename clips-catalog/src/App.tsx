@@ -26,8 +26,8 @@ const App: React.FC = () => {
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/videos" element={<Videos />} />
         <Route path="/upload" element={<Upload />} />
-        <Route path="/signup" element={auth ? <Navigate to="/welcome" /> : <Signup />} /> 
         {/* making sure that users already logged in are unable to signup or login*/}
+        <Route path="/signup" element={auth ? <Navigate to="/welcome" /> : <Signup />} /> 
         <Route path="/login" element={auth ? <Navigate to="/welcome" /> : <Login />} />
       </Routes>
     </>

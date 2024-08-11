@@ -15,6 +15,12 @@ nav {
   height: 60px;
 }
 
+.solo-logo {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
 ul {
   height: 100%;
   width: 100%;
@@ -29,14 +35,14 @@ ul {
   align-items: center;
   height: 100%;
   padding-right: 2.5rem;
-  cursor: pointer;
 }
 
 #logo {
   max-height: 100%;
   width: auto;
   filter: brightness(0) invert(1);
-  transition: 0.2s ease-in-out;
+  cursor: pointer;
+  transition: 0.15s ease-in-out;
 }
 
 #logo:hover {
