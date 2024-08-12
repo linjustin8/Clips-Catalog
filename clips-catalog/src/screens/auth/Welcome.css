@@ -18,7 +18,7 @@
   gap: 1rem;
 }
 
-.header {
+#intro {
   position: relative;
   line-height: 1.4;
   font-size: 36px;

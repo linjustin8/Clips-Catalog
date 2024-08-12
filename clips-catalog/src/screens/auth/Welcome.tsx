@@ -10,7 +10,7 @@ const Welcome: React.FC = () => {
   return (
     <div className="container">
       <div className="info">
-        <h1 className="header">
+        <h1 id="intro">
           Share clips, highlights, and memories with friends.
         </h1>
         <p className="desc">

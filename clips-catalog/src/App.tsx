@@ -1,5 +1,5 @@
 // App.tsx
-import React, { useState, useEffect, ReactElement } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "./contexts/AuthContext.tsx";
 import Welcome from "./screens/auth/Welcome.tsx";
 import Login from "./screens/auth/Login.tsx";
