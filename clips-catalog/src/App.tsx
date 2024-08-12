@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "./contexts/AuthContext.tsx";
 import Welcome from "./screens/auth/Welcome.tsx";
-import Login from "./screens/auth/Login.tsx";
-import Signup from "./screens/auth/Signup.tsx";
+import { Login } from "./screens/auth/Auth.tsx";
+import { Signup } from "./screens/auth/Auth.tsx";
 import Videos from "./screens/videos/Videos.tsx";
 import Upload from "./screens/videos/Upload.tsx";
 import { Routes, Route, Navigate } from "react-router-dom";
