@@ -38,11 +38,11 @@
   background-color: #1b183f;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2),
              -2px -2px 5px rgba(0, 0, 0, 0.2);
-  height: 230px;
+  height: 220px;
   width: 100%;
-  padding: 2rem;
-  padding-top: 2.5rem;
-  gap: 1rem;
+  padding: 1.75rem;
+  padding-top: 3rem;
+  gap: 1.5rem;
 }
 
 .user-entry {

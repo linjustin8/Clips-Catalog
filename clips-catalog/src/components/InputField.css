@@ -2,7 +2,7 @@
 
 .input-label {
   position: absolute;
-  top: 7px;
+  top: -2px;
   left: 4px;
   font-size: 24px;
   font-weight: 600;
@@ -16,6 +16,7 @@
   font-family: inherit;
   font-weight: 550;
   padding-left: 4px;
+  padding-bottom: 2px;
   background-color: #1b183f;
   border: none;
   border-bottom: rgb(174, 174, 174) 2px solid;
@@ -25,7 +26,7 @@
 
 .input-field:focus ~ .input-label,
 .input-field:not(:placeholder-shown) + .input-label {
-  top: -13px;
+  top: -24px;
   left: -1px;
   font-size: 14px;
   color: #a59bff;
