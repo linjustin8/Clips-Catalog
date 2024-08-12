@@ -1,2 +1,38 @@
 /* InputField.css */
 
+.input-label {
+  position: absolute;
+  top: 7px;
+  left: 4px;
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+  pointer-events: none;
+  transition: 0.2s ease all;
+}
+
+.input-field {
+  font-size: 24px;
+  font-family: inherit;
+  font-weight: 550;
+  padding-left: 4px;
+  background-color: #1b183f;
+  border: none;
+  border-bottom: rgb(174, 174, 174) 2px solid;
+  height: 55%;
+  width: 100%;
+}
+
+.input-field:focus ~ .input-label,
+.input-field:not(:placeholder-shown) + .input-label {
+  top: -13px;
+  left: -1px;
+  font-size: 14px;
+  color: #a59bff;
+}
+
+.input-field:focus {
+  outline: none;
+  border-bottom: 2px solid white;
+  box-shadow: 0 1px 0 0 rgb(167, 167, 167);
+}

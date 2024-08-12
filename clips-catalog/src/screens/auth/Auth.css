@@ -38,9 +38,10 @@
   background-color: #1b183f;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2),
              -2px -2px 5px rgba(0, 0, 0, 0.2);
-  height: 250px;
+  height: 230px;
   width: 100%;
   padding: 2rem;
+  padding-top: 2.5rem;
   gap: 1rem;
 }
 
@@ -50,24 +51,5 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-  gap: 8px;
-}
-
-input {
-  font-size: 1.5rem;
-  font-family: inherit;
-  font-weight: 500;
-  padding-left: 1px;
-  padding-bottom: 10px;
-  background-color: #1b183f;
-  border: none;
-  border-bottom: rgb(174, 174, 174) 2px solid;
-  height: 60%;
-  width: 100%;
-}
-
-input:focus {
-  outline: none;
-  border-bottom: 2px solid white;
-  box-shadow: 0 1px 0 0 rgb(167, 167, 167);
+  gap: 2px;
 }

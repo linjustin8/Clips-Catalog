@@ -1,5 +1,6 @@
 // InputField.tsx
 import React from "react";
+import "./InputField.css"
 
 interface InputFieldProps {
   id: string;
@@ -14,8 +15,10 @@ export const InputField: React.FC<InputFieldProps> = ({
 }: InputFieldProps) => {
   return (
     <div className={className}>
-      <label htmlFor={id}>{label}</label>
-      <input id={id} required />
+      <input className="input-field" id={id} placeholder=" " required />
+      <label className="input-label" htmlFor={id}>{label}</label>
     </div>
   );
 };
+
+
