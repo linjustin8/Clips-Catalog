@@ -33,27 +33,51 @@
 .password-input {
   display: flex;
   flex-direction: row;
-  font-size: 40px;
-  letter-spacing: 0px;
-  height: 60%;
+  font-size: 30px;
+  letter-spacing: 5px;
+  height: 55%;
   width: 100%;
 }
 
-.show-password {
+.show-password-container {
+  height: 55%;
   width: 30px;
   position: relative;
+  background-color: rgb(0,0,0,0);
+  border: none;
+  border-bottom: rgb(112, 112, 112) 2px solid;
+  overflow: hidden;
+}
+
+.show-password-icon {
+  visibility: hidden; 
+}
+
+.show-password-icon:hover {
+  filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
 }
 
 .input-field:focus ~ .input-label,
-.input-field:not(:placeholder-shown) + .input-label {
+.input-field:not(:placeholder-shown) ~ .input-label {
   top: -24px;
   left: -1px;
   font-size: 14px;
   color: #a59bff;
 }
 
+.input-field:not(:placeholder-shown) ~ .show-password-container .show-password-icon{
+  visibility: visible;
+  top: -8px;
+  transform: scale(140%);
+}
+
 .input-field:focus {
   outline: none;
+  border-bottom: 2px solid white;
+  box-shadow: 0 1px 0 0 rgb(167, 167, 167);
+}
+
+.input-field:focus ~ .show-password-container{
   border-bottom: 2px solid white;
   box-shadow: 0 1px 0 0 rgb(167, 167, 167);
 }

@@ -1,5 +1,7 @@
 // InputField.tsx
-import React from "react";
+import React, { useState, useRef } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import "./InputField.css";
 
 interface InputFieldProps {
@@ -17,36 +19,32 @@ export const InputField: React.FC<InputFieldProps> = ({
   onChange,
   type = "text",
 }: InputFieldProps) => {
+  const [showPassword, setShowPassword] = useState(false);
+  
+  const toggleHidden = () => {
+    setShowPassword(showPassword => !showPassword)
+  }
+  
+  
   return (
     <div className="auth-input-container">
-      {type != "password" ? (
-        <input
-        className="input-field"
+      <input
+        className={`input-field ${type === "password" && !showPassword ? "password-input" : ""}`}
         id={id}
         placeholder=" "
         required
-        value = {value}
+        value={value}
         onChange={onChange}
-        type={type}
+        type={showPassword && type === "password" ? "text" : type}
       />
-      ) : (
-        <div className="password-input">
-          <input
-            className="input-field"
-            id={id}
-            placeholder=" "
-            required
-            value = {value}
-            onChange={onChange}
-            type={type}
-          />
-          <button className="show-password"></button>
-        </div>
-      )}
-      
       <label className="input-label" htmlFor={id}>
         {label}
       </label>
+      {type === "password" && (
+        <button type="button" className="show-password-container" onClick={toggleHidden}>
+          <FontAwesomeIcon className="show-password-icon" icon={showPassword ? faEyeSlash : faEye } />
+        </button>
+      )}
     </div>
   );
 };
