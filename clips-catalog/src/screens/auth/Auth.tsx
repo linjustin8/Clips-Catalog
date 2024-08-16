@@ -12,27 +12,28 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState("");
   const [allowSubmission, setAllowSubmission] = useState(false);
 
+  const isValidEmail = validator.isEmail(email);
+  const isValidPassword = password.length >= 6;
+  
+  useEffect(() => {
+    setAllowSubmission(isValidEmail && isValidPassword);
+    console.log(allowSubmission);
+  }, [email, password]);
+  
   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if(!allowSubmission) {
+    
+    if (!allowSubmission) {
       return;
     }
-    
+
     try {
       await login(email, password);
     } catch (err) {
       console.log(err);
     }
   };
-  
-  useEffect(() => {
-    if(!validator.isEmail(email)) {
-      setAllowSubmission(false);
-    }
-  },[email, password])
-  
-  
+
   return (
     <div className="page-container">
       <div className="content-container">
@@ -48,6 +49,7 @@ const Login: React.FC = () => {
             label="Email Address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            valid={isValidEmail}
             type="email"
           />
           <InputField
@@ -55,10 +57,11 @@ const Login: React.FC = () => {
             label="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            valid={isValidPassword}
             type="password"
           />
         </form>
-        <button form="login" className="submit-user-info" disabled={true}>
+        <button form="login" className={`submit-user-info ${allowSubmission ? "allow-submit" : ""}`} disabled={!allowSubmission}>
           <p>LOGIN</p>
         </button>
       </div>

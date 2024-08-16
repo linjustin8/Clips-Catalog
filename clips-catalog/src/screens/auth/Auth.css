@@ -57,15 +57,24 @@
   transition: 0.2s ease all;
 }
 
-.submit-user-info p {
-  color: #998dff;
+.submit-user-info > p {
+  color: #8578ff;
 }
 
-.submit-user-info:not(:disabled):hover{
+.allow-submit {
   background-color: #5d4ee6;
+}
+
+.allow-submit > p{
   color: white;
 }
 
-.submit-user-info:not(:disabled):hover > p{
-  color: white;
+.allow-submit:hover {
+  filter: brightness(120%);
 }
+
+.allow-submit:active {
+  filter: brightness(80%);
+}
+
+
