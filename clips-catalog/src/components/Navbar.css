@@ -82,17 +82,16 @@ ul {
   border-radius: 15px;
   background-color: #201b50;
   padding: 3px;
-  transition: all 0.3 ease;
+  transition: all 0.2 ease;
 }
 
 .github:not(#github-text):hover {
-  background-color: rgba(32, 27, 80, 1);
-  transform: scale(1.01);
+  background-color: rgb(27, 22, 66);
 }
  
 .github:active {
   background-color: rgb(27, 22, 69);
-  transform: scale(0.98);
+  transform: scale(0.95);
 }
  
 .github-button {

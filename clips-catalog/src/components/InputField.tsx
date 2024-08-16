@@ -1,5 +1,6 @@
 // InputField.tsx
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import { validate } from "email-validator";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import "./InputField.css";
@@ -24,7 +25,6 @@ export const InputField: React.FC<InputFieldProps> = ({
   const toggleHidden = () => {
     setShowPassword(showPassword => !showPassword)
   }
-  
   
   return (
     <div className="auth-input-container">

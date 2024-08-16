@@ -11,7 +11,7 @@
   position: absolute;
   top: -2px;
   font-size: 24px;
-  font-weight: 575;
+  font-weight: 600;
   color: white;
   pointer-events: none;
   transition: 0.2s ease all;
@@ -46,11 +46,11 @@
   background-color: rgb(0,0,0,0);
   border: none;
   border-bottom: rgb(112, 112, 112) 2px solid;
-  overflow: hidden;
 }
 
 .show-password-icon {
   visibility: hidden; 
+  transition: 0.1s ease all;
 }
 
 .show-password-icon:hover {
