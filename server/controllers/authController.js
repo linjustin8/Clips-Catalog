@@ -39,10 +39,11 @@ const authUser = async (res, user, status, message) => {
     })
     .status(status)
     .json({ UserInfo: userInfo, accessToken: accessToken});
+    console.log({ UserInfo: userInfo, accessToken: accessToken});
 };
 
 // @desc Signup new users
-// @router POST /signup
+// @router POST /user/signup
 // @access Public
 const signup = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
@@ -73,16 +74,17 @@ const signup = asyncHandler(async (req, res) => {
 });
 
 // @desc Login existing users
-// @router POST /login
+// @router POST /user/login
 // @access Public
 const login = asyncHandler(async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!username || !password) {
+  if (!email || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  const user = await User.findOne({ username }).exec();
+  const user = await User.findOne({ email }).exec();
+  console.log(user.username);
 
   if (!user) {
     return res.status(401).json({ message: "User not found" });
@@ -92,7 +94,7 @@ const login = asyncHandler(async (req, res) => {
 
   if (!match) return res.status(401).json({ message: "Unauthorized" });
 
-  await authUser(res, user, 200, `Logged in user ${username}`);
+  await authUser(res, user, 200, `Logged in user ${user.username}`);
 });
 
 // @desc Refresh

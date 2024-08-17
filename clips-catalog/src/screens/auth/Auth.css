@@ -38,11 +38,19 @@
   background-color: #1b183f;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2),
              -2px -2px 5px rgba(0, 0, 0, 0.2);
-  height: 225px;
-  width: 100%;
+               width: 100%;
   padding: 1.75rem;
   padding-top: 3rem;
   gap: 1.5rem;
+}
+
+.login {
+  height: 250px;
+}
+
+.signup {
+  height: 350px;
+  gap: 2rem;
 }
 
 .submit-user-info {

@@ -9,7 +9,7 @@ interface InputFieldProps {
   label: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  valid: boolean; // checks validity of input
+  valid?: boolean; // checks validity of input
   type?: string;
 }
 
@@ -18,7 +18,7 @@ export const InputField: React.FC<InputFieldProps> = ({
   label,
   value,
   onChange,
-  valid,
+  valid = true,
   type = "text",
 }: InputFieldProps) => {
   const [showPassword, setShowPassword] = useState(false);

@@ -3,9 +3,9 @@ import React, { createContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
 
 interface User {
+  id: string;
   username: string;
   email: string;
-  password: string;
   roles: Array<string>;
 }
 
@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const verifyAuth = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/users/me");
+        const response = await axios.get("http://localhost:5000/user/me");
         setUser(response.data.user);
       } catch (err) {
         console.log("User is not authenticated", err);
@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signup = async ({ username, email, password }: SignupParams) => {
     const response = await axios.post(
-      "http://localhost:5000/users/signup",
+      "http://localhost:5000/user/signup",
       {
         username,
         email,
@@ -61,18 +61,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setAccessToken(response.data.accessToken);
   };
 
-  const login = async (username: string, password: string) => {
-    const response = await axios.post("http://localhost:5000/users/login", {
-      username,
+  const login = async (email: string, password: string) => {
+    const response = await axios.post("http://localhost:5000/user/login", {
+      email,
       password,
     });
-    const userData: User = response.data.user;
+    const userData: User = { ...response.data.UserInfo, email };
     setUser(userData);
     setAccessToken(response.data.accessToken);
+    console.log(userData);
   };
 
   const logout = async () => {
-    await axios.post("http://localhost:5000/users/logout");
+    await axios.post("http://localhost:5000/user/logout");
     setUser(null);
     setAccessToken(null);
   };
