@@ -12,6 +12,49 @@
   overflow: visible;
 }
 
+@keyframes slideDown {
+  from {
+    height: 0px;
+  }
+  to {
+    height: 60px;
+  }
+}
+
+.error-popup {
+  display: flex;
+  position: absolute; 
+  background-color: rgb(161, 0, 43);
+  width: 100vw;
+  height: 60px;
+  top: -60px;
+  z-index: 1001;
+  align-items: center;
+  justify-content: center;
+  animation: slideDown 0.2s ease forwards;
+}
+
+.error-popup button {
+  height: 100%;
+  width: 60px;
+  position: absolute;
+  align-self: right;
+  right: 10px;
+  background: none;
+  border: none;
+}
+
+.error-popup button:hover { 
+  background-color: rgb(161, 0, 43, 0.6);
+  filter: brightness(60%);
+}
+
+.error-popup button .icon {
+  height: 100%;
+  width: 100%;
+  transform: scale(75%);
+}
+
 .content-container {
   display: flex; 
   position: relative;
