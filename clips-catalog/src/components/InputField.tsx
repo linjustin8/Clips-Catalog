@@ -1,6 +1,5 @@
 // InputField.tsx
 import React, { useState, useEffect } from "react";
-import { validate } from "email-validator";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import "./InputField.css";
@@ -33,16 +32,16 @@ export const InputField: React.FC<InputFieldProps> = ({
       <input
         className={`input-field ${
           type === "password" && !showPassword ? "password-input" : ""
-        } ${valid ? "invalid-input" : ""}`}
+        } ${valid ? "" : "invalid-input"}`}
         id={id}
-        placeholder=" "
+        placeholder=""
         required
         value={value}
         onChange={onChange}
         type={showPassword && type === "password" ? "text" : type}
       />
       <label
-        className={`input-label ${valid ? "invalid-label" : ""}`}
+        className={`input-label ${valid ? "" : "invalid-label"}`}
         htmlFor={id}
       >
         {label}
@@ -50,7 +49,7 @@ export const InputField: React.FC<InputFieldProps> = ({
       {type === "password" && (
         <button
           type="button"
-          className={`show-password-container ${valid ? "invalid-button" : ""}`}
+          className={`show-password-container ${valid ? "" : "invalid-button"}`}
           onClick={toggleHidden}
         >
           <FontAwesomeIcon

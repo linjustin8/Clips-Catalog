@@ -7,16 +7,6 @@
   height: 100%;
 }
 
-.input-label {
-  position: absolute;
-  top: -2px;
-  font-size: 24px;
-  font-weight: 600;
-  color: white;
-  pointer-events: none;
-  transition: 0.2s ease all;
-}
-
 .input-field {
   font-size: 24px;
   font-family: inherit;
@@ -28,6 +18,16 @@
   border-bottom: rgb(112, 112, 112) 2px solid;
   height: 55%;
   width: 100%;
+}
+
+.input-label {
+  position: absolute;
+  top: -2px;
+  font-size: 24px;
+  font-weight: 600;
+  color: white;
+  pointer-events: none;
+  transition: 0.2s ease all;
 }
 
 .password-input {
@@ -80,4 +80,26 @@
 .input-field:focus ~ .show-password-container{
   border-bottom: 2px solid white;
   box-shadow: 0 1px 0 0 rgb(167, 167, 167);
+}
+
+.invalid-input:not(:placeholder-shown):focus {
+  border-bottom: rgb(255, 0, 0) 3px solid;
+  box-shadow: none;
+}
+
+.invalid-input:not(:focus) {
+  color: rgb(255, 154, 154);
+}
+
+.invalid-input:not(:placeholder-shown) {
+  border-bottom: rgb(255, 33, 33) 3px solid;
+}
+
+.input-field:not(:placeholder-shown) ~ .invalid-label {
+  color: rgb(255, 100, 100);
+}
+
+.input-field:not(:placeholder-shown) ~ .invalid-button {
+  border-bottom: rgb(255, 33, 33) 3px solid;
+  box-shadow: none;
 }
