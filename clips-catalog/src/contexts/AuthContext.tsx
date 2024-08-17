@@ -67,6 +67,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       password,
     });
     const userData: User = { ...response.data.UserInfo, email };
+    
     setUser(userData);
     setAccessToken(response.data.accessToken);
     console.log(userData);

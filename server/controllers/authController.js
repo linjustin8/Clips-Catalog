@@ -84,16 +84,16 @@ const login = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findOne({ email }).exec();
-  console.log(user.username);
-
+  
   if (!user) {
     return res.status(401).json({ message: "User not found" });
   }
-
+  
   const match = await bcrypt.compare(password, user.password);
-
-  if (!match) return res.status(401).json({ message: "Unauthorized" });
-
+  
+  if (!match) return res.status(401).json({ message: "Incorrect password" });
+  console.log(user.username);
+  
   await authUser(res, user, 200, `Logged in user ${user.username}`);
 });
 

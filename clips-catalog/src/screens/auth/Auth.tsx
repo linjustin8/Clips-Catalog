@@ -1,6 +1,7 @@
 //Auth.tsx
 
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import validator from "validator";
 import { useAuth } from "../../contexts/AuthContext";
 import { InputField } from "../../components/InputField";
@@ -11,6 +12,7 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [allowSubmission, setAllowSubmission] = useState(false);
+  const [error, setError] = useState("");
 
   const isValidEmail = validator.isEmail(email);
   const isValidPassword = password.length >= 6;
@@ -24,13 +26,16 @@ const Login: React.FC = () => {
     try {
       await login(email, password);
     } catch (err) {
-      console.log(err);
+      if(axios.isAxiosError(err)) {
+        console.log(err.response?.data.message);
+        setError(err.response?.data.message);
+      }
+      setPassword("");
     }
   };
   
   useEffect(() => {
     setAllowSubmission(isValidEmail && isValidPassword);
-    console.log(allowSubmission);
   }, [email, password]);
   
   return (
@@ -87,13 +92,13 @@ const Signup: React.FC = () => {
     try {
       await signup({username, email, password});
     } catch (err) {
+      setPassword("");
       console.log(err);
     }
   };
   
   useEffect(() => {
     setAllowSubmission(isValidEmail && isValidPassword);
-    console.log(allowSubmission);
   }, [email, password]);
   
   return (
