@@ -10,8 +10,9 @@ require("dotenv").config();
 // @desc Helper function
 const authUser = async (res, user, status, message) => {
   const userInfo = {
-    id: user._id,
+    id: String(user._id),
     username: user.username,
+    email: user.email,
     roles: user.roles,
   };
 
@@ -33,13 +34,13 @@ const authUser = async (res, user, status, message) => {
   res
     .cookie("jwt", refreshToken, {
       httpOnly: true, //accessible only by web server
-      secure: true, //https
+      secure: false, //false for development (http -> https)
       sameSite: "None", //cross-site cookie
       maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiry: set to match rT
     })
     .status(status)
-    .json({ UserInfo: userInfo, accessToken: accessToken});
-    console.log({ UserInfo: userInfo, accessToken: accessToken});
+    .json({ accessToken: accessToken });
+  console.log({ accessToken: accessToken });
 };
 
 // @desc Signup new users
@@ -84,16 +85,16 @@ const login = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findOne({ email }).exec();
-  
+
   if (!user) {
     return res.status(401).json({ message: "User not found" });
   }
-  
+
   const match = await bcrypt.compare(password, user.password);
-  
+
   if (!match) return res.status(401).json({ message: "Incorrect password" });
   console.log(user.username);
-  
+
   await authUser(res, user, 200, `Logged in user ${user.username}`);
 });
 
@@ -124,6 +125,7 @@ const refresh = (req, res) => {
           UserInfo: {
             id: foundUser._id,
             username: foundUser.username,
+            email: foundUser.email,
             roles: foundUser.roles,
           },
         },
@@ -149,24 +151,9 @@ const logout = (req, res) => {
     .json({ message: "Cookie cleared" });
 };
 
-// @desc verifies if the user is logged in
-// @route GET /users/me
-// @access Private
-const verifyAuth = asyncHandler(async (req, res) => {
-  await authAccess(req, res, () => {
-    const user = {
-      id: req.userId,
-      username: req.username,
-      roles: req.roles,
-    }
-    res.json({ user });
-  });
-});
-
 module.exports = {
   signup,
   login,
   refresh,
   logout,
-  verifyAuth,
 };

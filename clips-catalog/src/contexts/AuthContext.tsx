@@ -1,6 +1,7 @@
 // AuthContext.tsx
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 interface User {
   id: string;
@@ -27,17 +28,30 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+interface CustomJwtPayload {
+  UserInfo: User;
+}
+
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [accessToken, setAccessToken] = useState(null);
+  const [user, setUser] = useState<User | null>(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [accessToken, setAccessToken] = useState(() => {
+    const token = localStorage.getItem("accessToken");
+    return token;
+  });
 
   useEffect(() => {
     const verifyAuth = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/user/me");
-        setUser(response.data.user);
+        const response = await axios.get("http://localhost:5000/user/refresh");
+        const token = response.data.accessToken;
+        const decoded = jwtDecode<CustomJwtPayload>(token);
+        const userData: User = decoded.UserInfo;
+        setUser(userData);
       } catch (err) {
         console.log("User is not authenticated", err);
       }
@@ -46,6 +60,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     verifyAuth();
   }, []);
 
+  // need to fix
   const signup = async ({ username, email, password }: SignupParams) => {
     const response = await axios.post(
       "http://localhost:5000/user/signup",
@@ -56,6 +71,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       },
       { withCredentials: true }
     );
+    const token = response.data.token;
+    const decoded = jwtDecode(token);
     const userData: User = response.data.user;
     setUser(userData);
     setAccessToken(response.data.accessToken);
@@ -66,17 +83,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       email,
       password,
     });
-    const userData: User = { ...response.data.UserInfo, email };
+    const token = response.data.accessToken;
+    const decoded = jwtDecode<CustomJwtPayload>(token);
+    const userData: User = decoded.UserInfo;
     
     setUser(userData);
-    setAccessToken(response.data.accessToken);
-    console.log(userData);
+    setAccessToken(token);
+    
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("accessToken", token);
   };
 
   const logout = async () => {
     await axios.post("http://localhost:5000/user/logout");
     setUser(null);
-    setAccessToken(null);
+    setAccessToken("");
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
   };
 
   return (
@@ -86,10 +109,4 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
 };
 
-export const useAuth = () => {
-  const context = React.useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
+  

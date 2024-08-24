@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, ReactNode } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
@@ -11,7 +11,7 @@ import "./Navbar.css";
 
 
 const Navbar: React.FC = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const location = useLocation();
   const currentPage = location.pathname;
   
@@ -73,9 +73,7 @@ const Navbar: React.FC = () => {
             </li>
           </>
         ) : (
-          <>
-              
-          </>
+          <button className="github-button" onClick={() => {logout()}}>LOGOUT</button>
         )}
         
       </ul>

@@ -5,7 +5,7 @@ import axios from "axios";
 import validator from "validator";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../hooks/useAuth";
 import { InputField } from "../../components/InputField";
 import "./Auth.css";
 

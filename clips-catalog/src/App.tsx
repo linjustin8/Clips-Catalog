@@ -1,13 +1,13 @@
 // App.tsx
 import React, { useState, useEffect } from "react";
-import { useAuth } from "./contexts/AuthContext.tsx";
-import Welcome from "./screens/auth/Welcome.tsx";
-import { Login } from "./screens/auth/Auth.tsx";
-import { Signup } from "./screens/auth/Auth.tsx";
-import Videos from "./screens/videos/Videos.tsx";
-import Upload from "./screens/videos/Upload.tsx";
+import { useAuth } from "./hooks/useAuth";
+import Welcome from "./screens/auth/Welcome";
+import { Login } from "./screens/auth/Auth";
+import { Signup } from "./screens/auth/Auth";
+import Videos from "./screens/videos/Videos";
+import Upload from "./screens/videos/Upload";
 import { Routes, Route, Navigate } from "react-router-dom";
-import Navbar from "./components/Navbar.tsx";
+import Navbar from "./components/Navbar";
 
 const App: React.FC = () => {
   const { user } = useAuth();
