@@ -73,7 +73,9 @@ const Navbar: React.FC = () => {
             </li>
           </>
         ) : (
-          <button className="github-button" onClick={() => {logout()}}>LOGOUT</button>
+          <button className="github-button" onClick={() => {logout(); }}>
+            LOGOUT
+          </button>
         )}
         
       </ul>

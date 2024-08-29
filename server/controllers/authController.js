@@ -7,7 +7,7 @@ const authAccess = require("../middleware/verifyJWT");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-// @desc Helper function
+// @desc Sets user data after logging in or signing up
 const authUser = async (res, user, status, message) => {
   const userInfo = {
     id: String(user._id),
@@ -48,18 +48,28 @@ const authUser = async (res, user, status, message) => {
 // @access Public
 const signup = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
-
+  const errors = []
+  
   // confirm data
   if (!username || !password || !email) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   // check for duplicates
-  const duplicate = await User.findOne({ username }).lean().exec();
-  if (duplicate) {
-    return res.status(400).json({ message: "Duplicate username" });
+  const existingUser = await User.findOne({ username }).lean().exec();
+  if (existingUser) {
+    errors.push("Username already in use")
+  }
+    
+  const existingEmail = await User.findOne({ email }).lean().exec();
+  if (existingEmail) {
+    errors.push("Email already in use")
   }
 
+  if (errors.length) {
+    return res.status(400).json({errors: errors})
+  }
+  
   // Hash password
   const hashedPwd = await bcrypt.hash(password, 10); // 10 salt rounds
   const userObject = { username: username, email: email, password: hashedPwd };
@@ -144,7 +154,7 @@ const refresh = (req, res) => {
 };
 
 // @desc Logout user by just clearing cookies
-// @route POST /auth/logout
+// @route POST /user/logout
 // @access Private
 const logout = (req, res) => {
   const cookies = req.cookies;

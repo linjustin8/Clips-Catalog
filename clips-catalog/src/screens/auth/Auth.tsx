@@ -29,8 +29,8 @@ const Login: React.FC = () => {
       await login(email, password);
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        const errorMessage = err.response?.data.message
-        setError(errorMessage);
+        const errorMessage = err.response?.data.message;
+        setError("Error: " + String(errorMessage));
         console.log(errorMessage);
       }
       setPassword("");
@@ -51,14 +51,14 @@ const Login: React.FC = () => {
   
   return (
     <div className="page-container">
-      {error ? (
+      {error && (
         <div className="error-popup">
           <h1>{error}</h1>
           <button onClick={() => setError("")}>
             <FontAwesomeIcon className="icon" icon={faXmark} />
           </button>
         </div>
-      ) : null}
+      )}
       <div className="content-container">
         <h1 className="header">Log In</h1>
         <form
@@ -104,7 +104,8 @@ const Signup: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [allowSubmission, setAllowSubmission] = useState(false);
-
+  const [error, setError] = useState("");
+  
   const isValidEmail = validator.isEmail(email);
   const isValidPassword = password.length >= 6;
 
@@ -117,8 +118,12 @@ const Signup: React.FC = () => {
     try {
       await signup({ username, email, password });
     } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const errors = err.response?.data.errors;
+        setError("Error(s):" + errors);
+        console.log(errors);
+      }
       setPassword("");
-      console.log(err);
     }
   };
 
@@ -128,6 +133,14 @@ const Signup: React.FC = () => {
 
   return (
     <div className="page-container">
+      {error && (
+        <div className="error-popup">
+          <h1>{error}</h1>
+          <button onClick={() => setError([])}>
+            <FontAwesomeIcon className="icon" icon={faXmark} />
+          </button>
+        </div>
+      )}
       <div className="content-container">
         <h1 className="header">Sign Up</h1>
         <form

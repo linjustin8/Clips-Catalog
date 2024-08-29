@@ -63,7 +63,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     verifyAuth();
   }, []);
 
-  // need to fix
   const signup = async ({ username, email, password }: SignupParams) => {
     const response = await axios.post(
       "http://localhost:5000/user/signup",
@@ -72,12 +71,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         email,
         password,
       },
-      { withCredentials: true }
+      {
+        withCredentials: true,
+      }
     );
-    const token = response.data.token;
-    const userData: User = response.data.user;
+    const token = response.data.accessToken;
+    const decoded = jwtDecode<CustomJwtPayload>(token);
+    const userData: User = decoded.UserInfo;
+
     setUser(userData);
     setAccessToken(response.data.accessToken);
+
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("accessToken", token);
   };
 
   const login = async (email: string, password: string) => {
@@ -103,7 +109,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = async () => {
-    await axios.post("http://localhost:5000/user/logout");
+    await axios.post("http://localhost:5000/user/logout", {
+      withCredentials: true,
+    });
     setUser(null);
     setAccessToken("");
     localStorage.removeItem("user");
