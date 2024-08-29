@@ -23,6 +23,7 @@
 
 .error-popup {
   display: flex;
+  font-size: 10px;
   position: absolute; 
   background-color: rgb(161, 0, 43);
   width: 100vw;

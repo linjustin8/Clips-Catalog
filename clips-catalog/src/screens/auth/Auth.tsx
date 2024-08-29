@@ -106,6 +106,7 @@ const Signup: React.FC = () => {
   const [allowSubmission, setAllowSubmission] = useState(false);
   const [error, setError] = useState("");
   
+  const isValidUsername = username.length > 3;
   const isValidEmail = validator.isEmail(email);
   const isValidPassword = password.length >= 6;
 
@@ -120,7 +121,8 @@ const Signup: React.FC = () => {
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const errors = err.response?.data.errors;
-        setError("Error(s):" + errors);
+        
+        setError("Error(s): " + errors + " already in use");
         console.log(errors);
       }
       setPassword("");
@@ -136,7 +138,7 @@ const Signup: React.FC = () => {
       {error && (
         <div className="error-popup">
           <h1>{error}</h1>
-          <button onClick={() => setError([])}>
+          <button onClick={() => setError("")}>
             <FontAwesomeIcon className="icon" icon={faXmark} />
           </button>
         </div>
@@ -154,6 +156,7 @@ const Signup: React.FC = () => {
             label="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            valid={isValidUsername}
             type="email"
           />
           <InputField

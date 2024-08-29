@@ -58,12 +58,12 @@ const signup = asyncHandler(async (req, res) => {
   // check for duplicates
   const existingUser = await User.findOne({ username }).lean().exec();
   if (existingUser) {
-    errors.push("Username already in use")
+    errors.push("Username")
   }
     
   const existingEmail = await User.findOne({ email }).lean().exec();
   if (existingEmail) {
-    errors.push("Email already in use")
+    errors.push(" Email")
   }
 
   if (errors.length) {
