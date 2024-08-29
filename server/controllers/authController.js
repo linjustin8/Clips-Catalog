@@ -35,7 +35,7 @@ const authUser = async (res, user, status, message) => {
     .cookie("jwt", refreshToken, {
       httpOnly: true, //accessible only by web server
       secure: false, //false for development (http -> https)
-      sameSite: "None", //cross-site cookie
+      // sameSite: "None", //cross-site cookie
       maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiry: set to match rT
     })
     .status(status)
@@ -43,7 +43,7 @@ const authUser = async (res, user, status, message) => {
   console.log({ accessToken: accessToken });
 };
 
-// @desc Signup new users
+// @desc Signup new users/
 // @router POST /user/signup
 // @access Public
 const signup = asyncHandler(async (req, res) => {
@@ -99,13 +99,15 @@ const login = asyncHandler(async (req, res) => {
 });
 
 // @desc Refresh
-// @route GET /auth/refresh
+// @route GET /user/refresh
 // @access Public - because access token has expired
 const refresh = (req, res) => {
   const cookies = req.cookies;
-
-  if (!cookies?.jwt) return res.status(401).json({ message: "Unauthorized" });
-
+  
+  if (!cookies?.jwt) {
+    return res.status(401).json({ message: "Unauthorized - no cookies found" });
+  }
+    
   const refreshToken = cookies.jwt;
 
   jwt.verify(
@@ -118,7 +120,10 @@ const refresh = (req, res) => {
         username: decoded.username,
       }).exec();
 
-      if (!foundUser) return res.status(401).json({ message: "Unauthorized" });
+      if (!foundUser)
+        return res
+          .status(401)
+          .json({ message: "Unauthorized - user not found" });
 
       const accessToken = jwt.sign(
         {
@@ -144,11 +149,13 @@ const refresh = (req, res) => {
 const logout = (req, res) => {
   const cookies = req.cookies;
   if (!cookies?.jwt) {
-    return res.sendStatus(204).json({ message: "No user found" }); //No content
+    return res.sendStatus(204).json({ message: "No user found" });
   }
-  res
-    .clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true })
-    .json({ message: "Cookie cleared" });
+  res.clearCookie("jwt", { 
+    httpOnly: true, 
+    // sameSite: "None", 
+    secure: false })
+  .json({ message: "Cookie cleared" }); //No content
 };
 
 module.exports = {

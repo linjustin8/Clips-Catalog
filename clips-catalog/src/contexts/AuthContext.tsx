@@ -32,7 +32,9 @@ interface CustomJwtPayload {
   UserInfo: User;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
@@ -47,12 +49,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const verifyAuth = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/user/refresh");
+        const response = await axios.get("http://localhost:5000/user/refresh", {
+          withCredentials: true,
+        });
         const token = response.data.accessToken;
-        const decoded = jwtDecode<CustomJwtPayload>(token);
-        const userData: User = decoded.UserInfo;
-        setUser(userData);
+        setAccessToken(token);
       } catch (err) {
+        logout();
         console.log("User is not authenticated", err);
       }
     };
@@ -72,24 +75,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       { withCredentials: true }
     );
     const token = response.data.token;
-    const decoded = jwtDecode(token);
     const userData: User = response.data.user;
     setUser(userData);
     setAccessToken(response.data.accessToken);
   };
 
   const login = async (email: string, password: string) => {
-    const response = await axios.post("http://localhost:5000/user/login", {
-      email,
-      password,
-    });
+    const response = await axios.post(
+      "http://localhost:5000/user/login",
+      {
+        email,
+        password,
+      },
+      {
+        withCredentials: true,
+      }
+    );
     const token = response.data.accessToken;
     const decoded = jwtDecode<CustomJwtPayload>(token);
     const userData: User = decoded.UserInfo;
-    
+
     setUser(userData);
     setAccessToken(token);
-    
+
     localStorage.setItem("user", JSON.stringify(userData));
     localStorage.setItem("accessToken", token);
   };
@@ -108,5 +116,3 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-  

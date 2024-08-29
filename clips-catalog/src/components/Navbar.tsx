@@ -21,7 +21,7 @@ const Navbar: React.FC = () => {
     if (!user) {
       console.log("User is logged out");
     } else {
-      console.log(`User ${user.username} has logged in`);
+      console.log(`User ${user.username} is logged in`);
     }
   }, [user]);
   
