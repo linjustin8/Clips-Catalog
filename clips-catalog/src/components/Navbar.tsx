@@ -120,11 +120,14 @@ const Navbar: React.FC = () => {
             onClick={() => setOpen((open) => !open)}
           >
             {open ? (
-              <FontAwesomeIcon icon={faUser} className="user-icon" />
-            ) : (
               <>
                 <FontAwesomeIcon icon={faCaretDown} className="user-icon" />
-                <DropdownMenu />
+                <DropdownMenu open={open} />
+              </>
+            ) : (
+              <>
+                <FontAwesomeIcon icon={faUser} className="user-icon" />
+                {/* <DropdownMenu open={open} /> */}
               </>
             )}
           </button>

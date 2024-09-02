@@ -1,6 +1,6 @@
 /* Dropdown.css */
 
-.dropdown-menu {
+.dropdown-container {
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -11,6 +11,7 @@
   border-radius: 8px;
   padding: 0.5rem;
   overflow: hidden;
+  transition: height 0.1s ease
 }
 
 .menu-item {
@@ -31,10 +32,31 @@
 }
 
 .item-icon {
-    width: 25px;
+  width: 25px;
 }
 
 .item-icon svg {
-    height: 20px;
+  height: 20px;
 }
 
+.dropdown-enter {
+  opacity: 0;
+  transform: translateY(-10px); /* Starts 10px above its final position */
+}
+
+.dropdown-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms; /* Duration matches the timeout prop */
+}
+
+.dropdown-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dropdown-exit-active {
+  opacity: 0;
+  transform: translateY(-10px); /* Ends 10px above its final position */
+  transition: opacity 300ms, transform 300ms; /* Duration matches the timeout prop */
+}
