@@ -2,12 +2,12 @@
 import React from "react";
 import "./Button.css";
 
-interface IButtonProps {
+interface ButtonProps {
   text: string;
   onClick: () => void;
 }
 
-const Button: React.FC<IButtonProps> = ({ text, onClick }) => {
+const Button: React.FC<ButtonProps> = ({ text, onClick }) => {
   return <button onClick={onClick}>{text}</button>;
 };
 

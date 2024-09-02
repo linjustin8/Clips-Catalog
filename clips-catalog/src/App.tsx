@@ -1,6 +1,6 @@
 // App.tsx
 import React, { useState, useEffect } from "react";
-import { useAuth } from "./hooks/useAuth";
+import useAuth from "./hooks/useAuth";
 import Welcome from "./screens/auth/Welcome";
 import { Login } from "./screens/auth/Auth";
 import { Signup } from "./screens/auth/Auth";
@@ -22,13 +22,13 @@ const App: React.FC = () => {
     <>
       <Navbar />
       <Routes>
-        <Route path="/*" element={<Welcome />} />
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/videos" element={<Videos />} />
         <Route path="/upload" element={<Upload />} />
         {/* making sure that users already logged in are unable to signup or login*/}
         <Route path="/signup" element={auth ? <Navigate to="/welcome" /> : <Signup />} /> 
         <Route path="/login" element={auth ? <Navigate to="/welcome" /> : <Login />} />
+        <Route path="/*" element={<Welcome />} />
       </Routes>
     </>
   );
