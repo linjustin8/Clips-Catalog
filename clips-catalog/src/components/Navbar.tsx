@@ -3,26 +3,30 @@
 import React, { useState, useEffect, ReactNode } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import { DropdownMenu } from "./Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import "/logo.png";
 import "./Navbar.css";
 
 const Navbar: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const currentPage = location.pathname;
   const [open, setOpen] = useState(false);
-  
+
   useEffect(() => {
     if (!user) {
       console.log("User is logged out");
     } else {
       console.log(`User ${user.username} is logged in`);
     }
-  }, [user]);
+    const openPrint = open;
+    console.log(openPrint);
+  }, [user, open]);
 
   if (currentPage === "/login" || currentPage === "/signup") {
     // if current page is on login or signup
@@ -47,7 +51,7 @@ const Navbar: React.FC = () => {
           <button
             className="nav-button"
             onClick={() => {
-              navigate("/Welcome");
+              navigate("/");
             }}
           >
             <img id="logo" src="/logo_fill.png" />
@@ -111,8 +115,18 @@ const Navbar: React.FC = () => {
             </li>
           </>
         ) : (
-          <button className="user-button">
-            <FontAwesomeIcon icon={faUser} className="user-icon" />
+          <button
+            className="user-button"
+            onClick={() => setOpen((open) => !open)}
+          >
+            {open ? (
+              <FontAwesomeIcon icon={faUser} className="user-icon" />
+            ) : (
+              <>
+                <FontAwesomeIcon icon={faCaretDown} className="user-icon" />
+                <DropdownMenu />
+              </>
+            )}
           </button>
         )}
       </ul>

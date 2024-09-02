@@ -16,21 +16,21 @@ interface SignupParams {
   password: string;
 }
 
-interface AuthContextType {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export type AuthContextType = {
   user: User | null;
   accessToken: string | null;
   signup: (params: SignupParams) => Promise<void>;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
-}
+};
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-interface CustomJwtPayload {
+type CustomJwtPayload = {
   UserInfo: User;
-}
+};
 
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined
@@ -49,9 +49,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const verifyAuth = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/user/refresh", {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          "http://localhost:5000/api/user/refresh",
+          {
+            withCredentials: true,
+          }
+        );
         const token = response.data.accessToken;
         setAccessToken(token);
       } catch (err) {
@@ -65,7 +68,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signup = async ({ username, email, password }: SignupParams) => {
     const response = await axios.post(
-      "http://localhost:5000/user/signup",
+      "http://localhost:5000/api/user/signup",
       {
         username,
         email,
@@ -88,7 +91,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     const response = await axios.post(
-      "http://localhost:5000/user/login",
+      "http://localhost:5000/api/user/login",
       {
         email,
         password,
@@ -109,7 +112,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = async () => {
-    await axios.post("http://localhost:5000/user/logout", {
+    await axios.post("http://localhost:5000/api/user/logout", {
       withCredentials: true,
     });
     setUser(null);
