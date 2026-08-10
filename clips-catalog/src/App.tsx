@@ -1,5 +1,5 @@
 // App.tsx
-import React, { useState, useEffect } from "react";
+import React from "react";
 import useAuth from "./hooks/useAuth";
 import Welcome from "./screens/auth/Welcome";
 import { Login, Signup } from "./screens/auth/Auth";
@@ -7,17 +7,17 @@ import Videos from "./screens/videos/Videos";
 import Upload from "./screens/videos/Upload";
 import User from "./screens/user/User";
 import { Routes, Route, Navigate } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/navbar/Navbar";
 
 const App: React.FC = () => {
-  const { user } = useAuth();
-  const [auth, setAuth] = useState(false);
+  const { user, isLoading } = useAuth();
 
-  useEffect(() => { // setting initial condition for if user is logged in
-    setAuth(!!user);
-  }, [user]);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-  
+  const auth = Boolean(user);
+
   return (
     <>
       <Navbar />

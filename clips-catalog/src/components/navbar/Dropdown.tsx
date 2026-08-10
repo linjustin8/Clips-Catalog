@@ -1,9 +1,9 @@
 // Dropdown.tsx
 
-import React, { useState, useEffect, useRef, ReactNode } from "react";
+import React, { useRef, ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
-import useAuth from "../hooks/useAuth";
+import useAuth from "@/hooks/useAuth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { faClapperboard } from "@fortawesome/free-solid-svg-icons";
@@ -37,34 +37,18 @@ const DropdownItem: React.FC<ItemProps> = ({ route, icon, children }) => {
 };
 
 export const DropdownMenu: React.FC<MenuProps> = ({ open }) => {
-  const [menuHeight, setMenuHeight] = useState<number>(0);
-  const dropdownRef = useRef<any>(null);
-
-  useEffect(() => {
-    console.log("used effect : " + open);
-    setMenuHeight(dropdownRef.current?.firstChild.offsetHeight);
-  }, []);
-
-  function calcHeight(element: any) {
-    const height = element.offsetHeight;
-    setMenuHeight(height);
-    console.log(menuHeight);
-  }
+  const menuRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div
-      className="dropdown-container"
-      ref={dropdownRef}
-      style={{ height: menuHeight }}
-    >
+    <div className="dropdown-container">
       <CSSTransition
+        nodeRef={menuRef}
         timeout={300}
         in={open}
         unmountOnExit
         classNames="dropdown"
-        onEnter={calcHeight}
       >
-        <div className="dropdown-menu">
+        <div className="dropdown-menu" ref={menuRef}>
           <DropdownItem
             route="/user/settings"
             icon={<FontAwesomeIcon icon={faGear} />}

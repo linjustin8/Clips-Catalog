@@ -1,7 +1,15 @@
 // AuthContext.tsx
-import React, { createContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+
+const API_URL = "http://localhost:5001/api/user";
 
 interface User {
   id: string;
@@ -23,9 +31,10 @@ interface AuthProviderProps {
 export type AuthContextType = {
   user: User | null;
   accessToken: string | null;
+  isLoading: boolean;
   signup: (params: SignupParams) => Promise<void>;
   login: (username: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 };
 
 type CustomJwtPayload = {
@@ -37,38 +46,40 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 );
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
-  const [accessToken, setAccessToken] = useState(() => {
-    const token = localStorage.getItem("accessToken");
-    return token;
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const setSession = useCallback((token: string) => {
+    const decoded = jwtDecode<CustomJwtPayload>(token);
+
+    setUser(decoded.UserInfo);
+    setAccessToken(token);
+  }, []);
 
   useEffect(() => {
-    const verifyAuth = async () => {
+    const restoreSession = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:5000/api/user/refresh",
-          {
-            withCredentials: true,
-          }
-        );
-        const token = response.data.accessToken;
-        setAccessToken(token);
+        const response = await axios.get(`${API_URL}/refresh`, {
+          withCredentials: true,
+        });
+
+        setSession(response.data.accessToken);
       } catch (err) {
-        logout();
+        setUser(null);
+        setAccessToken(null);
         console.log("User is not authenticated", err);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    verifyAuth();
-  }, []);
+    restoreSession();
+  }, [setSession]);
 
   const signup = async ({ username, email, password }: SignupParams) => {
     const response = await axios.post(
-      "http://localhost:5000/api/user/signup",
+      `${API_URL}/signup`,
       {
         username,
         email,
@@ -78,20 +89,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         withCredentials: true,
       }
     );
-    const token = response.data.accessToken;
-    const decoded = jwtDecode<CustomJwtPayload>(token);
-    const userData: User = decoded.UserInfo;
-
-    setUser(userData);
-    setAccessToken(response.data.accessToken);
-
-    localStorage.setItem("user", JSON.stringify(userData));
-    localStorage.setItem("accessToken", token);
+    setSession(response.data.accessToken);
   };
 
   const login = async (email: string, password: string) => {
     const response = await axios.post(
-      "http://localhost:5000/api/user/login",
+      `${API_URL}/login`,
       {
         email,
         password,
@@ -100,29 +103,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         withCredentials: true,
       }
     );
-    const token = response.data.accessToken;
-    const decoded = jwtDecode<CustomJwtPayload>(token);
-    const userData: User = decoded.UserInfo;
-
-    setUser(userData);
-    setAccessToken(token);
-
-    localStorage.setItem("user", JSON.stringify(userData));
-    localStorage.setItem("accessToken", token);
+    setSession(response.data.accessToken);
   };
 
   const logout = async () => {
-    await axios.post("http://localhost:5000/api/user/logout", {
-      withCredentials: true,
-    });
+    await axios.post(`${API_URL}/logout`, {}, { withCredentials: true });
+
     setUser(null);
-    setAccessToken("");
-    localStorage.removeItem("user");
-    localStorage.removeItem("accessToken");
+    setAccessToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, accessToken, signup, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, accessToken, isLoading, signup, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

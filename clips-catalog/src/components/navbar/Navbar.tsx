@@ -1,8 +1,8 @@
 //Navbar.tsx
 
-import React, { useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 import { DropdownMenu } from "./Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -57,26 +57,18 @@ const Navbar: React.FC = () => {
             <img id="logo" src="/logo_fill.png" />
           </button>
         </li>
-        <li className="nav-button-container">
-          <button
-            className="nav-button"
-            onClick={() => {
-              navigate("/videos");
-            }}
-          >
-            Videos
-          </button>
-        </li>
-        <li className="nav-button-container">
-          <button
-            className="nav-button"
-            onClick={() => {
-              navigate("/upload");
-            }}
-          >
-            Upload
-          </button>
-        </li>
+        <NavItem
+          label="Videos"
+          onClick={() => {
+            navigate("/videos");
+          }}
+        />
+        <NavItem
+          label="Clips"
+          onClick={() => {
+            navigate("/clips");
+          }}
+        />
         <li
           className="nav-button-container github"
           onClick={() => {
@@ -134,6 +126,18 @@ const Navbar: React.FC = () => {
         )}
       </ul>
     </nav>
+  );
+};
+
+const NavItem: React.FC<{ label: string; onClick: () => void }> = ({ label, onClick }) => {
+  return (
+    <li className="nav-button-container">
+      <button
+        className="nav-button"
+        onClick={onClick}>
+        {label}
+      </button>
+    </li>
   );
 };
 
