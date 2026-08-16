@@ -9,7 +9,7 @@ import React, {
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-const API_URL = "http://localhost:5001/api/user";
+const API_URL = "/api/user";
 
 interface User {
   id: string;

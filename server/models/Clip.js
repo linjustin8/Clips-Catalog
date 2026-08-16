@@ -20,10 +20,23 @@ const clipSchema = new mongoose.Schema({
       default: "",
     },
   ],
+  s3Key: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
   s3Url: {
     type: String,
-    required: true,
-  }
+  },
+  contentType: {
+    type: String,
+  },
+  fileSize: {
+    type: Number,
+  },
 });
+
+clipSchema.index({ uploadDate: -1, _id: -1 });
+clipSchema.index({ uploader: 1, uploadDate: -1, _id: -1 });
 
 module.exports = mongoose.model("Clip", clipSchema);

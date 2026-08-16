@@ -4,8 +4,9 @@ import React, { useRef, ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 import useAuth from "@/hooks/useAuth";
+import usePermissions from "@/hooks/usePermissions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGear } from "@fortawesome/free-solid-svg-icons";
+import { faGear, faUpload } from "@fortawesome/free-solid-svg-icons";
 import { faClapperboard } from "@fortawesome/free-solid-svg-icons";
 import { faBookmark } from "@fortawesome/free-solid-svg-icons";
 import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
@@ -38,6 +39,7 @@ const DropdownItem: React.FC<ItemProps> = ({ route, icon, children }) => {
 
 export const DropdownMenu: React.FC<MenuProps> = ({ open }) => {
   const menuRef = useRef<HTMLDivElement>(null);
+  const { isAdmin } = usePermissions();
 
   return (
     <div className="dropdown-container">
@@ -49,6 +51,14 @@ export const DropdownMenu: React.FC<MenuProps> = ({ open }) => {
         classNames="dropdown"
       >
         <div className="dropdown-menu" ref={menuRef}>
+          {isAdmin && (
+            <DropdownItem
+              route="/upload"
+              icon={<FontAwesomeIcon icon={faUpload} />}
+            >
+              Upload
+            </DropdownItem>
+          )}
           <DropdownItem
             route="/user/settings"
             icon={<FontAwesomeIcon icon={faGear} />}

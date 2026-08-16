@@ -7,6 +7,13 @@ const authAccess = require("../middleware/verifyJWT");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
+const refreshCookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+
 // @desc Sets user data after logging in or signing up
 const authUser = async (res, user, status, message) => {
   const userInfo = {
@@ -32,12 +39,7 @@ const authUser = async (res, user, status, message) => {
 
   // Create secure cookie with refresh token
   res
-    .cookie("jwt", refreshToken, {
-      httpOnly: true, //accessible only by web server
-      secure: false, //false for development (http -> https)
-      // sameSite: "None", //cross-site cookie
-      maxAge: 7 * 24 * 60 * 60 * 1000, //cookie expiry: set to match rT
-    })
+    .cookie("jwt", refreshToken, refreshCookieOptions)
     .status(status)
     .json({ accessToken: accessToken });
   console.log({ accessToken: accessToken });
@@ -161,10 +163,11 @@ const logout = (req, res) => {
   if (!cookies?.jwt) {
     return res.sendStatus(204).json({ message: "No user found" });
   }
-  res.clearCookie("jwt", { 
-    httpOnly: true, 
-    // sameSite: "None", 
-    secure: false })
+  res.clearCookie("jwt", {
+    httpOnly: refreshCookieOptions.httpOnly,
+    secure: refreshCookieOptions.secure,
+    sameSite: refreshCookieOptions.sameSite,
+  })
   .json({ message: "Cookie cleared" }); //No content
 };
 

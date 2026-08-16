@@ -64,9 +64,9 @@ const Navbar: React.FC = () => {
           }}
         />
         <NavItem
-          label="Clips"
+          label="About"
           onClick={() => {
-            navigate("/clips");
+            navigate("/about");
           }}
         />
         <li
@@ -119,7 +119,6 @@ const Navbar: React.FC = () => {
             ) : (
               <>
                 <FontAwesomeIcon icon={faUser} className="user-icon" />
-                {/* <DropdownMenu open={open} /> */}
               </>
             )}
           </button>
