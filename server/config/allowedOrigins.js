@@ -5,7 +5,7 @@ const configuredOrigins = (process.env.CLIENT_ORIGINS || "")
   .map(normalizeOrigin)
   .filter(Boolean);
 
-const developmentOrigins = ["http://localhost:3000", "http://localhost:5173"];
+const developmentOrigins = ["http://localhost:3000", "http://localhost:5173", "https://clps.us", "https://www.clps.us"].map(normalizeOrigin);
 
 const allowedOrigins = [
   ...new Set([
