@@ -2,6 +2,9 @@ import { useCallback, useState } from "react";
 import axios from "axios";
 import useAuth from "./useAuth";
 import usePermissions from "./usePermissions";
+import { Clip } from "../types/clip";
+
+export type { Clip } from "../types/clip";
 
 const CLIPS_API_URL = "/api/clips";
 const MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024;
@@ -13,18 +16,6 @@ export type UploadStatus =
   | "saving"
   | "success"
   | "error";
-
-export interface Clip {
-  _id: string;
-  title: string;
-  uploader: string;
-  categories: string[];
-  s3Key: string;
-  contentType: string;
-  fileSize: number;
-  uploadDate: string;
-  playbackUrl: string;
-}
 
 interface UploadClipParams {
   file: File;

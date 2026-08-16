@@ -67,7 +67,7 @@
   z-index: -1;
 }
 
-video {
+.bg-video video {
   position: relative;
   width: 90vw;
   z-index: -1;
