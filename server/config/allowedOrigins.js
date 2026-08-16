@@ -1,5 +1,20 @@
-// allowedOrigins.js
+const normalizeOrigin = (origin) => origin.trim().replace(/\/$/, "");
 
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3000"];
+const configuredOrigins = (process.env.CLIENT_ORIGINS || "")
+  .split(",")
+  .map(normalizeOrigin)
+  .filter(Boolean);
 
-module.exports = allowedOrigins;
+const developmentOrigins = ["http://localhost:3000", "http://localhost:5173"];
+
+const allowedOrigins = [
+  ...new Set([
+    ...configuredOrigins,
+    ...(process.env.NODE_ENV === "production" ? [] : developmentOrigins),
+  ]),
+];
+
+const isAllowedOrigin = (origin) =>
+  allowedOrigins.includes(normalizeOrigin(origin));
+
+module.exports = { allowedOrigins, isAllowedOrigin };

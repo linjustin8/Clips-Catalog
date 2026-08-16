@@ -6,7 +6,6 @@ require("dotenv").config();
 const authAccess = (req, res, next) => {
   const authHeader = req.headers.authorization || req.headers.Authorization;
 
-  console.log(authHeader);
   if (!authHeader?.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -15,7 +14,7 @@ const authAccess = (req, res, next) => {
   
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) {
-      return res.status(401).json({ message: "Failed to authenticate token", err: err });
+      return res.status(401).json({ message: "Failed to authenticate token" });
     }
 
     req.userId = decoded.UserInfo.id;

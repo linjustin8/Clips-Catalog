@@ -1,4 +1,7 @@
 require("dotenv").config();
+const validateEnvironment = require("./config/validateEnvironment");
+validateEnvironment();
+
 const express = require("express");
 const path = require("path");
 const app = express();
@@ -12,7 +15,6 @@ const mongoose = require("mongoose");
 const { logEvents } = require("./middleware/logger");
 
 const PORT = process.env.PORT || 5000;
-console.log(process.env.NODE_ENV);
 
 connectDB();
 

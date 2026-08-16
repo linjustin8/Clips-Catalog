@@ -6,10 +6,28 @@ import React, {
   useState,
   ReactNode,
 } from "react";
-import axios from "axios";
+import axios, { type AxiosResponse } from "axios";
 import { jwtDecode } from "jwt-decode";
 
 const API_URL = "/api/user";
+
+let sessionRefreshRequest: Promise<
+  AxiosResponse<{ accessToken: string }>
+> | null = null;
+
+const requestSessionRefresh = () => {
+  if (!sessionRefreshRequest) {
+    sessionRefreshRequest = axios
+      .post<{ accessToken: string }>(`${API_URL}/refresh`, {}, {
+        withCredentials: true,
+      })
+      .finally(() => {
+        sessionRefreshRequest = null;
+      });
+  }
+
+  return sessionRefreshRequest;
+};
 
 interface User {
   id: string;
@@ -60,9 +78,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const restoreSession = async () => {
       try {
-        const response = await axios.get(`${API_URL}/refresh`, {
-          withCredentials: true,
-        });
+        const response = await requestSessionRefresh();
 
         setSession(response.data.accessToken);
       } catch (err) {

@@ -1,92 +1,120 @@
-// authController.js
-
 const User = require("../models/User");
+const RefreshSession = require("../models/RefreshSession");
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
-const authAccess = require("../middleware/verifyJWT");
+const { createHash, randomUUID } = require("crypto");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+
+const REFRESH_TOKEN_LIFETIME_MS = 7 * 24 * 60 * 60 * 1000;
+const REFRESH_REUSE_GRACE_MS = 10 * 1000;
+const REFRESH_COOKIE_NAME =
+  process.env.NODE_ENV === "production"
+    ? "__Secure-refreshToken"
+    : "refreshToken";
 
 const refreshCookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax",
-  maxAge: 7 * 24 * 60 * 60 * 1000,
+  path: "/api/user",
+  maxAge: REFRESH_TOKEN_LIFETIME_MS,
 };
 
-// @desc Sets user data after logging in or signing up
-const authUser = async (res, user, status, message) => {
-  const userInfo = {
-    id: String(user._id),
-    username: user.username,
-    email: user.email,
-    roles: user.roles,
-  };
+const refreshCookieClearOptions = {
+  httpOnly: refreshCookieOptions.httpOnly,
+  secure: refreshCookieOptions.secure,
+  sameSite: refreshCookieOptions.sameSite,
+  path: refreshCookieOptions.path,
+};
 
-  const accessToken = jwt.sign(
+const clearRefreshCookie = (res) => {
+  res.clearCookie(REFRESH_COOKIE_NAME, refreshCookieClearOptions);
+  res.clearCookie("jwt", refreshCookieClearOptions);
+};
+
+const hashToken = (token) => createHash("sha256").update(token).digest("hex");
+
+const createAccessToken = (user) =>
+  jwt.sign(
     {
-      UserInfo: userInfo,
+      UserInfo: {
+        id: String(user._id),
+        username: user.username,
+        email: user.email,
+        roles: user.roles,
+      },
     },
     process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: "15m" }
   );
 
-  const refreshToken = jwt.sign(
-    { username: user.username },
-    process.env.REFRESH_TOKEN_SECRET,
-    { expiresIn: "7d" }
-  );
+const createRefreshToken = (user) =>
+  jwt.sign({ username: user.username }, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: "7d",
+    jwtid: randomUUID(),
+    subject: String(user._id),
+  });
 
-  // Create secure cookie with refresh token
+const saveRefreshSession = (userId, refreshToken, familyId = randomUUID()) =>
+  RefreshSession.create({
+    user: userId,
+    familyId,
+    tokenHash: hashToken(refreshToken),
+    expiresAt: new Date(Date.now() + REFRESH_TOKEN_LIFETIME_MS),
+  });
+
+const authUser = async (res, user, status) => {
+  const accessToken = createAccessToken(user);
+  const refreshToken = createRefreshToken(user);
+
+  await saveRefreshSession(user._id, refreshToken);
+
   res
-    .cookie("jwt", refreshToken, refreshCookieOptions)
+    .clearCookie("jwt", refreshCookieClearOptions)
+    .cookie(REFRESH_COOKIE_NAME, refreshToken, refreshCookieOptions)
+    .set("Cache-Control", "no-store")
     .status(status)
-    .json({ accessToken: accessToken });
+    .json({ accessToken });
 };
 
-// @desc Signup new users/
-// @router POST /user/signup
+// @desc Signup new users
+// @route POST /api/user/signup
 // @access Public
 const signup = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
-  const errors = []
-  
-  // confirm data
+  const errors = [];
+
   if (!username || !password || !email) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
-  // check for duplicates
   const existingUser = await User.findOne({ username }).lean().exec();
-  if (existingUser) {
-    errors.push("Username")
-  }
-    
+  if (existingUser) errors.push("Username");
+
   const existingEmail = await User.findOne({ email }).lean().exec();
-  if (existingEmail) {
-    errors.push(" Email")
-  }
+  if (existingEmail) errors.push("Email");
 
   if (errors.length) {
-    return res.status(400).json({errors: errors})
+    return res.status(400).json({ errors });
   }
-  
-  // Hash password
-  const hashedPwd = await bcrypt.hash(password, 10); // 10 salt rounds
-  const userObject = { username: username, email: email, password: hashedPwd };
 
-  // create and store user object
-  const user = await User.create(userObject);
+  const hashedPwd = await bcrypt.hash(password, 10);
+  const user = await User.create({
+    username,
+    email,
+    password: hashedPwd,
+  });
 
-  if (user) {
-    await authUser(res, user, 201, `Created user ${username}`);
-  } else {
-    res.status(400).json({ message: "Invalid user data received" });
+  if (!user) {
+    return res.status(400).json({ message: "Invalid user data received" });
   }
+
+  await authUser(res, user, 201);
 });
 
 // @desc Login existing users
-// @router POST /user/login
+// @route POST /api/user/login
 // @access Public
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -96,79 +124,123 @@ const login = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findOne({ email }).exec();
+  const passwordMatches = user
+    ? await bcrypt.compare(password, user.password)
+    : false;
 
-  if (!user) {
-    return res.status(401).json({ message: "User not found" });
+  if (!user || !passwordMatches) {
+    return res.status(401).json({ message: "Invalid email or password" });
   }
 
-  const match = await bcrypt.compare(password, user.password);
-
-  if (!match) return res.status(401).json({ message: "Incorrect password" });
-  console.log(user.username);
-
-  await authUser(res, user, 200, `Logged in user ${user.username}`);
+  await authUser(res, user, 200);
 });
 
-// @desc Refresh
-// @route GET /user/refresh
-// @access Public - because access token has expired
-const refresh = (req, res) => {
-  const cookies = req.cookies;
-  
-  if (!cookies?.jwt) {
-    return res.status(401).json({ message: "Unauthorized - no cookies found" });
+// @desc Rotate a refresh session and issue a new access token
+// @route POST /api/user/refresh
+// @access Public (requires refresh cookie)
+const refresh = asyncHandler(async (req, res) => {
+  const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME];
+
+  if (!refreshToken) {
+    return res.status(401).json({ message: "Unauthorized - no cookie found" });
   }
-    
-  const refreshToken = cookies.jwt;
 
-  jwt.verify(
-    refreshToken,
-    process.env.REFRESH_TOKEN_SECRET,
-    async (err, decoded) => {
-      if (err) return res.status(403).json({ message: "Forbidden" });
+  let decoded;
+  try {
+    decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+  } catch {
+    clearRefreshCookie(res);
+    return res.status(403).json({ message: "Invalid refresh session" });
+  }
 
-      const foundUser = await User.findOne({
-        username: decoded.username,
-      }).exec();
+  const session = await RefreshSession.findOne({
+    tokenHash: hashToken(refreshToken),
+  }).exec();
 
-      if (!foundUser)
-        return res
-          .status(401)
-          .json({ message: "Unauthorized - user not found" });
+  if (!session || session.expiresAt <= new Date()) {
+    clearRefreshCookie(res);
+    return res.status(403).json({ message: "Invalid refresh session" });
+  }
 
-      const accessToken = jwt.sign(
-        {
-          UserInfo: {
-            id: foundUser._id,
-            username: foundUser.username,
-            email: foundUser.email,
-            roles: foundUser.roles,
-          },
-        },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "15m" }
-      );
-
-      res.json({ accessToken });
+  if (session.revokedAt) {
+    if (Date.now() - session.revokedAt.getTime() <= REFRESH_REUSE_GRACE_MS) {
+      return res.status(409).json({ message: "Refresh already in progress" });
     }
-  );
-};
 
-// @desc Logout user by just clearing cookies
-// @route POST /user/logout
-// @access Private
-const logout = (req, res) => {
-  const cookies = req.cookies;
-  if (!cookies?.jwt) {
-    return res.sendStatus(204).json({ message: "No user found" });
+    await RefreshSession.updateMany(
+      { familyId: session.familyId, revokedAt: null },
+      { $set: { revokedAt: new Date() } }
+    );
+    clearRefreshCookie(res);
+    return res.status(403).json({ message: "Refresh token reuse detected" });
   }
-  res.clearCookie("jwt", {
-    httpOnly: refreshCookieOptions.httpOnly,
-    secure: refreshCookieOptions.secure,
-    sameSite: refreshCookieOptions.sameSite,
-  })
-  .json({ message: "Cookie cleared" }); //No content
-};
+
+  const foundUser = await User.findById(session.user).exec();
+  if (!foundUser || String(foundUser._id) !== decoded.sub) {
+    clearRefreshCookie(res);
+    return res.status(401).json({ message: "Unauthorized - user not found" });
+  }
+
+  const nextRefreshToken = createRefreshToken(foundUser);
+  const nextTokenHash = hashToken(nextRefreshToken);
+  const rotatedSession = await RefreshSession.findOneAndUpdate(
+    { _id: session._id, revokedAt: null },
+    {
+      $set: {
+        revokedAt: new Date(),
+        replacedByTokenHash: nextTokenHash,
+      },
+    }
+  ).exec();
+
+  if (!rotatedSession) {
+    const latestSessionState = await RefreshSession.findById(session._id).exec();
+    if (
+      latestSessionState?.revokedAt &&
+      Date.now() - latestSessionState.revokedAt.getTime() <=
+        REFRESH_REUSE_GRACE_MS
+    ) {
+      return res.status(409).json({ message: "Refresh already in progress" });
+    }
+
+    await RefreshSession.updateMany(
+      { familyId: session.familyId, revokedAt: null },
+      { $set: { revokedAt: new Date() } }
+    );
+    clearRefreshCookie(res);
+    return res.status(403).json({ message: "Refresh token reuse detected" });
+  }
+
+  await saveRefreshSession(
+    foundUser._id,
+    nextRefreshToken,
+    session.familyId
+  );
+
+  res
+    .cookie(REFRESH_COOKIE_NAME, nextRefreshToken, refreshCookieOptions)
+    .set("Cache-Control", "no-store")
+    .json({ accessToken: createAccessToken(foundUser) });
+});
+
+// @desc Revoke the current refresh session and clear its cookie
+// @route POST /api/user/logout
+// @access Public (requires refresh cookie)
+const logout = asyncHandler(async (req, res) => {
+  const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME];
+
+  if (!refreshToken) {
+    return res.sendStatus(204);
+  }
+
+  await RefreshSession.updateOne(
+    { tokenHash: hashToken(refreshToken), revokedAt: null },
+    { $set: { revokedAt: new Date() } }
+  );
+
+  clearRefreshCookie(res);
+  res.json({ message: "Session ended" });
+});
 
 module.exports = {
   signup,
