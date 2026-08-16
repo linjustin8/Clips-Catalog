@@ -42,7 +42,6 @@ const authUser = async (res, user, status, message) => {
     .cookie("jwt", refreshToken, refreshCookieOptions)
     .status(status)
     .json({ accessToken: accessToken });
-  console.log({ accessToken: accessToken });
 };
 
 // @desc Signup new users/
