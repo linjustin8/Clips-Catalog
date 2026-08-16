@@ -85,6 +85,71 @@ ul {
   transition: all 0.2 ease;
 }
 
+.admin-upload-container {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.admin-upload-container + .github {
+  margin-left: 0.75rem;
+}
+
+.admin-upload-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid #6c6c6c;
+  border-radius: 50%;
+  color: #ffffff;
+  background-color: #201b50;
+  font-size: 1.1rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+  transition: width 0.25s ease, gap 0.25s ease, border-radius 0.25s ease,
+    background-color 0.2s ease, transform 0.2s ease;
+}
+
+.admin-upload-button:hover,
+.admin-upload-button:focus-visible {
+  width: 112px;
+  gap: 0.55rem;
+  border-radius: 15px;
+  background-color: #48408d;
+}
+
+.admin-upload-button:hover {
+  transform: scale(1.05);
+}
+
+.admin-upload-label {
+  max-width: 0;
+  opacity: 0;
+  font-size: 0.9rem;
+  transition: max-width 0.25s ease, opacity 0.15s ease;
+}
+
+.admin-upload-button:hover .admin-upload-label,
+.admin-upload-button:focus-visible .admin-upload-label {
+  max-width: 60px;
+  opacity: 1;
+}
+
+.admin-upload-button:active {
+  transform: scale(0.95);
+}
+
+.admin-upload-button:focus-visible {
+  outline: 2px solid #8578ff;
+  outline-offset: 3px;
+}
+
 .github:not(#github-text):hover {
   background-color: rgb(27, 22, 66);
 }

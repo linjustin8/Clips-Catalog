@@ -65,12 +65,6 @@ export const DropdownMenu: React.FC<MenuProps> = ({ open, onUploadClick }) => {
             </button>
           )}
           <DropdownItem
-            route="/user/settings"
-            icon={<FontAwesomeIcon icon={faGear} />}
-          >
-            Account Settings
-          </DropdownItem>
-          <DropdownItem
             route="/user/clips"
             icon={<FontAwesomeIcon icon={faClapperboard} />}
           >
@@ -81,6 +75,12 @@ export const DropdownMenu: React.FC<MenuProps> = ({ open, onUploadClick }) => {
             icon={<FontAwesomeIcon icon={faBookmark} />}
           >
             Favorites
+          </DropdownItem>
+          <DropdownItem
+            route="/user/settings"
+            icon={<FontAwesomeIcon icon={faGear} />}
+          >
+            Account Settings
           </DropdownItem>
           <DropdownItem
             route="/logout"

@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import usePermissions from "../../hooks/usePermissions";
 import { DropdownMenu } from "./Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faCaretDown } from "@fortawesome/free-solid-svg-icons";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import "/logo.png";
@@ -15,6 +16,7 @@ const UploadModal = React.lazy(() => import("../upload/UploadModal"));
 
 const Navbar: React.FC = () => {
   const { user } = useAuth();
+  const { isAdmin } = usePermissions();
   const location = useLocation();
   const navigate = useNavigate();
   const currentPage = location.pathname;
@@ -73,6 +75,20 @@ const Navbar: React.FC = () => {
             navigate("/about");
           }}
         />
+        {isAdmin && (
+          <li className="admin-upload-container">
+            <button
+              type="button"
+              className="admin-upload-button"
+              onClick={() => setUploadModalOpen(true)}
+              aria-label="Upload a clip"
+              title="Upload a clip"
+            >
+              <FontAwesomeIcon icon={faPlus} className="admin-upload-icon" />
+              <span className="admin-upload-label">Upload</span>
+            </button>
+          </li>
+        )}
         <li
           className="nav-button-container github"
           onClick={() => {
