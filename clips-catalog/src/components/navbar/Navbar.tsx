@@ -11,12 +11,15 @@ import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import "/logo.png";
 import "./Navbar.css";
 
+const UploadModal = React.lazy(() => import("../upload/UploadModal"));
+
 const Navbar: React.FC = () => {
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const currentPage = location.pathname;
   const [open, setOpen] = useState(false);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -45,6 +48,7 @@ const Navbar: React.FC = () => {
   }
 
   return (
+    <>
     <nav>
       <ul>
         <li id="logoContainer">
@@ -107,24 +111,36 @@ const Navbar: React.FC = () => {
             </li>
           </>
         ) : (
-          <button
-            className="user-button"
-            onClick={() => setOpen((open) => !open)}
-          >
-            {open ? (
-              <>
-                <FontAwesomeIcon icon={faCaretDown} className="user-icon" />
-                <DropdownMenu open={open} />
-              </>
-            ) : (
-              <>
-                <FontAwesomeIcon icon={faUser} className="user-icon" />
-              </>
-            )}
-          </button>
+          <li className="user-menu-container">
+            <button
+              className="user-button"
+              onClick={() => setOpen((open) => !open)}
+              aria-label="Open account menu"
+              aria-expanded={open}
+            >
+              <FontAwesomeIcon
+                icon={open ? faCaretDown : faUser}
+                className="user-icon"
+              />
+            </button>
+            <DropdownMenu
+              open={open}
+              onUploadClick={() => {
+                setOpen(false);
+                setUploadModalOpen(true);
+              }}
+            />
+          </li>
         )}
       </ul>
     </nav>
+    <React.Suspense fallback={null}>
+      <UploadModal
+        open={uploadModalOpen}
+        onClose={() => setUploadModalOpen(false)}
+      />
+    </React.Suspense>
+    </>
   );
 };
 

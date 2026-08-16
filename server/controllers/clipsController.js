@@ -3,17 +3,27 @@ const path = require("path");
 const mongoose = require("mongoose");
 const { v4: uuidv4 } = require("uuid");
 const Clip = require("../models/Clip");
-const AWS = require("aws-sdk");
+const {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  HeadObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const asyncHandler = require("express-async-handler");
 require("dotenv").config();
 
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+const s3 = new S3Client({
   region: process.env.AWS_REGION,
+  credentials:
+    process.env.AWS_ACCESS_KEY && process.env.AWS_SECRET_ACCESS_KEY
+      ? {
+          accessKeyId: process.env.AWS_ACCESS_KEY,
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        }
+      : undefined,
 });
-
-const s3 = new AWS.S3();
 const bucket = process.env.S3_BUCKET_NAME;
 const configuredMaxFileSizeMb = Number.parseInt(
   process.env.MAX_CLIP_SIZE_MB,
@@ -93,11 +103,14 @@ const addCursorFilter = (filter, cursor) => {
 const getPlaybackUrl = async (clip) => {
   if (!clip.s3Key) return clip.s3Url;
 
-  return s3.getSignedUrlPromise("getObject", {
-    Bucket: bucket,
-    Key: clip.s3Key,
-    Expires: 60 * 60,
-  });
+  return getSignedUrl(
+    s3,
+    new GetObjectCommand({
+      Bucket: bucket,
+      Key: clip.s3Key,
+    }),
+    { expiresIn: 60 * 60 }
+  );
 };
 
 const serializeClips = (clips) =>
@@ -150,12 +163,15 @@ const createUploadUrl = asyncHandler(async (req, res) => {
     .toLowerCase()
     .replace(/[^a-z0-9.]/g, "");
   const key = `clips/${req.userId}/${uuidv4()}${extension}`;
-  const uploadUrl = await s3.getSignedUrlPromise("putObject", {
-    Bucket: bucket,
-    Key: key,
-    ContentType: contentType,
-    Expires: 5 * 60,
-  });
+  const uploadUrl = await getSignedUrl(
+    s3,
+    new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      ContentType: contentType,
+    }),
+    { expiresIn: 5 * 60 }
+  );
 
   res.json({
     uploadUrl,
@@ -198,16 +214,20 @@ const completeUpload = asyncHandler(async (req, res) => {
 
   let object;
   try {
-    object = await s3.headObject({ Bucket: bucket, Key: key }).promise();
+    object = await s3.send(new HeadObjectCommand({ Bucket: bucket, Key: key }));
   } catch (error) {
-    if (error.code === "NotFound" || error.statusCode === 404) {
+    if (
+      error.name === "NotFound" ||
+      error.name === "NoSuchKey" ||
+      error.$metadata?.httpStatusCode === 404
+    ) {
       return res.status(400).json({ message: "The uploaded file was not found" });
     }
     throw error;
   }
 
   if (!ALLOWED_VIDEO_TYPES.has(object.ContentType)) {
-    await s3.deleteObject({ Bucket: bucket, Key: key }).promise();
+    await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
     return res.status(400).json({ message: "The uploaded object is not a supported video" });
   }
 
@@ -216,7 +236,7 @@ const completeUpload = asyncHandler(async (req, res) => {
     object.ContentLength < 1 ||
     object.ContentLength > MAX_FILE_SIZE
   ) {
-    await s3.deleteObject({ Bucket: bucket, Key: key }).promise();
+    await s3.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
     return res.status(400).json({
       message: `The uploaded video must be no larger than ${MAX_FILE_SIZE_MB} MB`,
       maxFileSizeBytes: MAX_FILE_SIZE,
@@ -261,7 +281,9 @@ const remove = asyncHandler(async (req, res) => {
   }
 
   if (clip.s3Key) {
-    await s3.deleteObject({ Bucket: bucket, Key: clip.s3Key }).promise();
+    await s3.send(
+      new DeleteObjectCommand({ Bucket: bucket, Key: clip.s3Key })
+    );
   }
 
   await clip.deleteOne();

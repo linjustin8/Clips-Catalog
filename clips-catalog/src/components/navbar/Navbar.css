@@ -139,6 +139,12 @@ ul {
   background-color: #4a3eb999;
 }
 
+.user-menu-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .user-button {
   min-height: 45px;
   min-width: 45px;

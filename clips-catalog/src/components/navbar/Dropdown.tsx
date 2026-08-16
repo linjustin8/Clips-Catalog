@@ -20,6 +20,7 @@ interface ItemProps {
 
 interface MenuProps {
   open: boolean;
+  onUploadClick: () => void;
 }
 
 const DropdownItem: React.FC<ItemProps> = ({ route, icon, children }) => {
@@ -37,27 +38,31 @@ const DropdownItem: React.FC<ItemProps> = ({ route, icon, children }) => {
   );
 };
 
-export const DropdownMenu: React.FC<MenuProps> = ({ open }) => {
+export const DropdownMenu: React.FC<MenuProps> = ({ open, onUploadClick }) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const { isAdmin } = usePermissions();
 
   return (
-    <div className="dropdown-container">
-      <CSSTransition
-        nodeRef={menuRef}
-        timeout={300}
-        in={open}
-        unmountOnExit
-        classNames="dropdown"
-      >
-        <div className="dropdown-menu" ref={menuRef}>
+    <CSSTransition
+      nodeRef={menuRef}
+      timeout={300}
+      in={open}
+      unmountOnExit
+      classNames="dropdown"
+    >
+      <div className="dropdown-container" ref={menuRef}>
+        <div className="dropdown-menu">
           {isAdmin && (
-            <DropdownItem
-              route="/upload"
-              icon={<FontAwesomeIcon icon={faUpload} />}
+            <button
+              type="button"
+              className="menu-item menu-item-button"
+              onClick={onUploadClick}
             >
+              <span className="item-icon">
+                <FontAwesomeIcon icon={faUpload} />
+              </span>
               Upload
-            </DropdownItem>
+            </button>
           )}
           <DropdownItem
             route="/user/settings"
@@ -89,8 +94,8 @@ export const DropdownMenu: React.FC<MenuProps> = ({ open }) => {
             Sign Out
           </DropdownItem>
         </div>
-      </CSSTransition>
-    </div>
+      </div>
+    </CSSTransition>
   );
 };
 
