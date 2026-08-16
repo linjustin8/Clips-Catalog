@@ -5,6 +5,7 @@ import {
   CardActionArea,
   CardContent,
   Chip,
+  Skeleton,
   Stack,
   Typography,
 } from "@mui/material";
@@ -19,6 +20,7 @@ interface ClipCardProps {
 
 const ClipCard = ({ clip, onClick }: ClipCardProps) => {
   const [previewFailed, setPreviewFailed] = useState(false);
+  const [previewReady, setPreviewReady] = useState(false);
 
   return (
     <Card
@@ -56,14 +58,20 @@ const ClipCard = ({ clip, onClick }: ClipCardProps) => {
               src={clip.playbackUrl}
               muted
               playsInline
-              preload="metadata"
-              onError={() => setPreviewFailed(true)}
+              preload="auto"
+              onLoadedData={() => setPreviewReady(true)}
+              onError={() => {
+                setPreviewFailed(true);
+                setPreviewReady(true);
+              }}
               sx={{
                 width: "100%",
                 height: "100%",
                 display: "block",
                 objectFit: "cover",
                 pointerEvents: "none",
+                opacity: previewReady ? 1 : 0,
+                transition: "opacity 180ms ease",
               }}
             />
           ) : (
@@ -80,6 +88,24 @@ const ClipCard = ({ clip, onClick }: ClipCardProps) => {
             </Box>
           )}
 
+          {!previewReady && (
+            <Skeleton
+              variant="rectangular"
+              animation="wave"
+              sx={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                bgcolor: "#201b50",
+                "&::after": {
+                  background:
+                    "linear-gradient(90deg, transparent, rgba(133, 120, 255, 0.12), transparent)",
+                },
+              }}
+            />
+          )}
+
           <Box
             sx={{
               position: "absolute",
@@ -90,7 +116,7 @@ const ClipCard = ({ clip, onClick }: ClipCardProps) => {
               fontSize: 42,
               background:
                 "linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 60%)",
-              opacity: 0.86,
+              opacity: previewReady ? 0.86 : 0,
               transition: "opacity 180ms ease, transform 180ms ease",
               ".MuiCard-root:hover &": { opacity: 1, transform: "scale(1.08)" },
             }}

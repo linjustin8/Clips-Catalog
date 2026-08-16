@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import ClipCard from "../../components/clips/ClipCard";
+import ClipCardSkeleton from "../../components/clips/ClipCardSkeleton";
 import VideoPlayerModal from "../../components/clips/VideoPlayerModal";
 import useClips from "../../hooks/useClips";
 import useInfiniteScroll from "../../hooks/useInfiniteScroll";
@@ -57,8 +58,10 @@ const Videos = () => {
       )}
 
       {isLoading ? (
-        <Box className="videos-loading">
-          <CircularProgress />
+        <Box className="clips-grid" aria-label="Loading clips">
+          {Array.from({ length: 12 }, (_, index) => (
+            <ClipCardSkeleton key={index} />
+          ))}
         </Box>
       ) : clips.length === 0 && !error ? (
         <Box className="videos-empty">
@@ -73,6 +76,10 @@ const Videos = () => {
             {clips.map((clip) => (
               <ClipCard key={clip._id} clip={clip} onClick={setSelectedClip} />
             ))}
+            {isLoadingMore &&
+              Array.from({ length: 4 }, (_, index) => (
+                <ClipCardSkeleton key={`loading-${index}`} />
+              ))}
           </Box>
 
           {hasMore && (
