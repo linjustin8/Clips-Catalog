@@ -26,18 +26,12 @@ import {
   faFileVideo,
 } from "@fortawesome/free-solid-svg-icons";
 import useClipUpload from "../../hooks/useClipUpload";
+import { getVideoContentType, VIDEO_FILE_ACCEPT } from "../../utils/videoFiles";
 
 interface UploadModalProps {
   open: boolean;
   onClose: () => void;
 }
-
-const ACCEPTED_VIDEO_TYPES = [
-  "video/mp4",
-  "video/quicktime",
-  "video/webm",
-  "video/x-matroska",
-];
 
 const formatFileSize = (bytes: number) => {
   const megabytes = bytes / (1024 * 1024);
@@ -58,7 +52,10 @@ const UploadModal = ({ open, onClose }: UploadModalProps) => {
     progress,
     error,
     isUploading,
-    maxFileSizeBytes,
+    cancel,
+    canCancel,
+    compressionProgress,
+    compressionSizes,
   } = useClipUpload();
 
   useEffect(() => {
@@ -77,16 +74,10 @@ const UploadModal = ({ open, onClose }: UploadModalProps) => {
 
     setFile(selectedFile);
     setFileError(null);
+    reset();
 
-    if (!ACCEPTED_VIDEO_TYPES.includes(selectedFile.type)) {
+    if (!getVideoContentType(selectedFile)) {
       setFileError("Choose an MP4, MOV, WebM, or MKV video.");
-      return;
-    }
-
-    if (selectedFile.size > maxFileSizeBytes) {
-      setFileError(
-        "This test uploader requires a file at or below 100 MB. Automatic compression is the next step."
-      );
     }
   };
 
@@ -102,6 +93,7 @@ const UploadModal = ({ open, onClose }: UploadModalProps) => {
   };
 
   const handleDropzoneKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (isUploading) return;
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       inputRef.current?.click();
@@ -129,14 +121,19 @@ const UploadModal = ({ open, onClose }: UploadModalProps) => {
     if (!isUploading) onClose();
   };
 
-  const statusLabel =
-    status === "requesting-url"
-      ? "Preparing secure upload…"
-      : status === "uploading"
-        ? `Uploading to S3… ${progress}%`
-        : status === "saving"
-          ? "Saving clip details…"
-          : null;
+  const compressionAttempt = compressionProgress?.attempt ?? 0;
+  const compressionPercent = compressionProgress?.percent;
+  const retryLabel = compressionAttempt > 1 ? ` (attempt ${compressionAttempt} of 3)` : "";
+  const percentLabel = compressionPercent != null ? ` ${compressionPercent}%` : "";
+  const statusLabels: Partial<Record<typeof status, string>> = {
+    preparing: "Preparing video compressor…",
+    compressing: `Compressing video${retryLabel}…${percentLabel}`,
+    "requesting-url": "Preparing secure upload…",
+    uploading: `Uploading to S3… ${progress}%`,
+    saving: "Saving clip details…",
+  };
+  const statusLabel = statusLabels[status];
+  const hasProgress = status === "uploading" || (status === "compressing" && compressionPercent != null);
 
   const canSubmit = Boolean(file && title.trim() && !fileError && !isUploading);
 
@@ -172,7 +169,8 @@ const UploadModal = ({ open, onClose }: UploadModalProps) => {
         <Stack spacing={2.5} sx={{ pt: 1 }}>
           <Box
             role="button"
-            tabIndex={0}
+            tabIndex={isUploading ? -1 : 0}
+            aria-disabled={isUploading}
             onClick={() => !isUploading && inputRef.current?.click()}
             onKeyDown={handleDropzoneKeyDown}
             onDragEnter={(event) => {
@@ -232,7 +230,7 @@ const UploadModal = ({ open, onClose }: UploadModalProps) => {
                   }}
                 />
                 <Typography variant="caption" sx={{ color: "rgb(167, 167, 167)" }}>
-                  Click or drop another file to replace it
+                  {isUploading ? "Keep this tab open while your video is prepared and uploaded" : "Click or drop another file to replace it"}
                 </Typography>
               </>
             ) : (
@@ -244,7 +242,7 @@ const UploadModal = ({ open, onClose }: UploadModalProps) => {
                   or click to choose a file
                 </Typography>
                 <Typography variant="caption" sx={{ color: "rgb(112, 112, 112)" }}>
-                  MP4, MOV, WebM, or MKV · maximum 100 MB
+                  MP4, MOV, WebM, or MKV
                 </Typography>
               </>
             )}
@@ -252,7 +250,8 @@ const UploadModal = ({ open, onClose }: UploadModalProps) => {
               ref={inputRef}
               hidden
               type="file"
-              accept={ACCEPTED_VIDEO_TYPES.join(",")}
+              disabled={isUploading}
+              accept={VIDEO_FILE_ACCEPT}
               onChange={handleFileInput}
             />
           </Box>
@@ -268,9 +267,9 @@ const UploadModal = ({ open, onClose }: UploadModalProps) => {
               "& .MuiAlert-icon": { color: "#a59bff" },
             }}
           >
-            Videos larger than 100 MB will eventually be compressed in your browser
-            before upload. For this initial test, select a video that is already 100 MB
-            or smaller.
+            Videos larger than 100 MB are automatically compressed to 100 MB or less
+            before upload, at up to 1080p. Smaller videos are uploaded unchanged.
+            Large videos may take several minutes to process on your device.
           </Alert>
 
           <TextField
@@ -300,8 +299,9 @@ const UploadModal = ({ open, onClose }: UploadModalProps) => {
                 {statusLabel}
               </Typography>
               <LinearProgress
-                variant={status === "uploading" ? "determinate" : "indeterminate"}
-                value={progress}
+                aria-label={statusLabel}
+                variant={hasProgress ? "determinate" : "indeterminate"}
+                value={status === "compressing" ? compressionPercent ?? 0 : progress}
                 sx={{
                   height: 7,
                   borderRadius: 10,
@@ -313,6 +313,12 @@ const UploadModal = ({ open, onClose }: UploadModalProps) => {
           )}
 
           {error && <Alert severity="error">{error}</Alert>}
+          {status === "cancelled" && <Alert severity="info">Compression cancelled. Your video has not been uploaded.</Alert>}
+          {compressionSizes && (
+            <Typography variant="body2" sx={{ color: "#a59bff" }}>
+              Compressed from {formatFileSize(compressionSizes.original)} to {formatFileSize(compressionSizes.compressed)}
+            </Typography>
+          )}
           {status === "success" && (
             <Alert severity="success">Your clip was uploaded successfully.</Alert>
           )}
@@ -321,11 +327,11 @@ const UploadModal = ({ open, onClose }: UploadModalProps) => {
 
       <DialogActions sx={{ px: 3, pb: 3 }}>
         <Button
-          onClick={handleClose}
-          disabled={isUploading}
+          onClick={canCancel ? cancel : handleClose}
+          disabled={isUploading && !canCancel}
           sx={{ color: "rgb(167, 167, 167)", fontFamily: "inherit" }}
         >
-          {status === "success" ? "Done" : "Cancel"}
+          {canCancel ? "Cancel compression" : status === "success" ? "Done" : "Cancel"}
         </Button>
         {status !== "success" && (
           <Button

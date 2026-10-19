@@ -5,6 +5,8 @@ import path from 'node:path'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  // Let Vite resolve FFmpeg's module worker relative to the original package.
+  optimizeDeps: { exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util'] },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
