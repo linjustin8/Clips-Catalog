@@ -1,6 +1,6 @@
 //Navbar.tsx
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import usePermissions from "../../hooks/usePermissions";
@@ -22,16 +22,25 @@ const Navbar: React.FC = () => {
   const currentPage = location.pathname;
   const [open, setOpen] = useState(false);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const userMenuRef = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
-    if (!user) {
-      console.log("User is logged out");
-    } else {
-      console.log(`User ${user.username} is logged in`);
-    }
-    const openPrint = open;
-    console.log(openPrint);
-  }, [user, open]);
+    if (!open) return;
+
+    const closeOnOutsidePointer = (event: PointerEvent) => {
+      if (
+        event.target instanceof Node &&
+        !userMenuRef.current?.contains(event.target)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsidePointer);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsidePointer);
+    };
+  }, [open]);
 
   if (currentPage === "/login" || currentPage === "/signup") {
     // if current page is on login or signup
@@ -127,7 +136,7 @@ const Navbar: React.FC = () => {
             </li>
           </>
         ) : (
-          <li className="user-menu-container">
+          <li className="user-menu-container" ref={userMenuRef}>
             <button
               className="user-button"
               onClick={() => setOpen((open) => !open)}
