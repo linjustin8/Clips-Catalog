@@ -3,6 +3,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const { v4: uuidv4 } = require("uuid");
 const Clip = require("../models/Clip");
+const User = require("../models/User");
 const {
   DeleteObjectCommand,
   GetObjectCommand,
@@ -113,13 +114,26 @@ const getPlaybackUrl = async (clip) => {
   );
 };
 
-const serializeClips = (clips) =>
-  Promise.all(
+const serializeClips = async (clips) => {
+  if (clips.length === 0) return [];
+
+  // Fetch public display names in one query while preserving uploader IDs for
+  // ownership checks. Do not expose account emails or other user fields.
+  const uploaderIds = [...new Set(clips.map((clip) => clip.uploader.toString()))];
+  const uploaders = await User.find({ _id: { $in: uploaderIds } })
+    .select("_id username")
+    .lean()
+    .exec();
+  const usernames = new Map(uploaders.map((user) => [user._id.toString(), user.username]));
+
+  return Promise.all(
     clips.map(async (clip) => ({
       ...clip.toObject(),
+      uploaderUsername: usernames.get(clip.uploader.toString()) ?? null,
       playbackUrl: await getPlaybackUrl(clip),
     }))
   );
+};
 
 const getClipPage = async (filter, query) => {
   validateS3Config();

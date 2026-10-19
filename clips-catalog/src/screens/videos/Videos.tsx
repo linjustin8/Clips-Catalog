@@ -24,6 +24,7 @@ const Videos = () => {
     hasMore,
     loadMore,
     refresh,
+    removeClip,
   } = useClips();
   const [selectedClip, setSelectedClip] = useState<Clip | null>(null);
   const loadMoreRef = useInfiniteScroll({
@@ -63,7 +64,7 @@ const Videos = () => {
             <ClipCardSkeleton key={index} />
           ))}
         </Box>
-      ) : clips.length === 0 && !error ? (
+      ) : clips.length === 0 && !hasMore && !error ? (
         <Box className="videos-empty">
           <Typography variant="h6">No clips have been uploaded yet.</Typography>
           <Typography sx={{ color: "text.secondary" }}>
@@ -116,6 +117,7 @@ const Videos = () => {
       <VideoPlayerModal
         clip={selectedClip}
         onClose={() => setSelectedClip(null)}
+        onDeleted={removeClip}
       />
     </Container>
   );

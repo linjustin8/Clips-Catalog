@@ -21,7 +21,7 @@ function loadModule(filename, dependencies, env = {}) {
   return context.module.exports;
 }
 
-function requestUpload(endpoint, token) {
+function requestUpload(endpoint, token, method = "POST") {
   // Exercise the real router and JWT verification without AWS, MongoDB, or
   // sockets. Stub only the controller work after authentication succeeds.
   const verifyJWT = loadModule(path.join(__dirname, "../middleware/verifyJWT.js"), {
@@ -39,7 +39,7 @@ function requestUpload(endpoint, token) {
     },
   });
   return new Promise((resolve, reject) => {
-    const req = { method: "POST", url: endpoint, headers: token ? { authorization: `Bearer ${token}` } : {} };
+    const req = { method, url: endpoint, headers: token ? { authorization: `Bearer ${token}` } : {} };
     const res = {
       statusCode: 200,
       status(code) { this.statusCode = code; return this; },
@@ -48,6 +48,16 @@ function requestUpload(endpoint, token) {
     router.handle(req, res, (error) => reject(error || new Error("Upload handler was not reached")));
   });
 }
+
+test("deletion requires a valid signed-in account", async () => {
+  for (const token of [undefined, "invalid-token"]) {
+    assert.equal((await requestUpload("/123456789012345678901234", token, "DELETE")).status, 401);
+  }
+  const token = jwt.sign({ UserInfo: { id: "owner", roles: ["Viewer"] } }, secret);
+  const response = await requestUpload("/123456789012345678901234", token, "DELETE");
+  assert.equal(response.status, 200);
+  assert.equal(response.body.uploader, "owner");
+});
 
 for (const endpoint of ["/upload-url", "/complete"]) {
   for (const role of ["Viewer", "admin"]) {

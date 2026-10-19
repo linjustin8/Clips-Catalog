@@ -27,6 +27,12 @@ const useClips = () => {
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(true);
   const requestIdRef = useRef(0);
+  const deletedClipIds = useRef(new Set<string>());
+
+  const removeClip = useCallback((clipId: string) => {
+    deletedClipIds.current.add(clipId);
+    setClips((current) => current.filter((clip) => clip._id !== clipId));
+  }, []);
 
   const loadFirstPage = useCallback(async () => {
     const requestId = ++requestIdRef.current;
@@ -39,7 +45,7 @@ const useClips = () => {
       });
 
       if (requestId !== requestIdRef.current) return;
-      setClips(data.clips);
+      setClips(data.clips.filter((clip) => !deletedClipIds.current.has(clip._id)));
       setNextCursor(data.nextCursor);
       setHasMore(data.hasMore);
     } catch (caughtError) {
@@ -72,7 +78,7 @@ const useClips = () => {
         const existingIds = new Set(current.map((clip) => clip._id));
         return [
           ...current,
-          ...data.clips.filter((clip) => !existingIds.has(clip._id)),
+          ...data.clips.filter((clip) => !existingIds.has(clip._id) && !deletedClipIds.current.has(clip._id)),
         ];
       });
       setNextCursor(data.nextCursor);
@@ -92,6 +98,7 @@ const useClips = () => {
     hasMore,
     loadMore,
     refresh: loadFirstPage,
+    removeClip,
   };
 };
 
