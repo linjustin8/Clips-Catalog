@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import useAuth from "./useAuth";
-import usePermissions from "./usePermissions";
 import { Clip } from "../types/clip";
 import { compressVideo, CompressionProgress, MAX_VIDEO_BYTES } from "../utils/compressVideo";
 import { getVideoContentType } from "../utils/videoFiles";
@@ -50,7 +49,6 @@ const getErrorMessage = (error: unknown) => {
 
 const useClipUpload = () => {
   const { accessToken } = useAuth();
-  const { isAdmin } = usePermissions();
   const [status, setStatus] = useState<UploadStatus>("idle");
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -91,10 +89,6 @@ const useClipUpload = () => {
       try {
         if (!accessToken) {
           throw new Error("You must be signed in to upload a video");
-        }
-
-        if (!isAdmin) {
-          throw new Error("Only administrators can upload videos");
         }
 
         if (!title.trim()) {
@@ -182,7 +176,7 @@ const useClipUpload = () => {
         if (activeUpload.current === controller) activeUpload.current = null;
       }
     },
-    [accessToken, isAdmin]
+    [accessToken]
   );
 
   return {
@@ -192,7 +186,7 @@ const useClipUpload = () => {
     canCancel,
     compressionProgress,
     compressionSizes,
-    canUpload: Boolean(accessToken && isAdmin),
+    canUpload: Boolean(accessToken),
     isUploading:
       status === "preparing" ||
       status === "compressing" ||

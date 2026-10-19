@@ -8,11 +8,9 @@ import Upload from "./screens/videos/Upload";
 import User from "./screens/user/User";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/navbar/Navbar";
-import usePermissions from "./hooks/usePermissions";
 
 const App: React.FC = () => {
   const { user, isLoading } = useAuth();
-  const { isAdmin } = usePermissions();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -28,7 +26,7 @@ const App: React.FC = () => {
         <Route path="/videos" element={<Videos />} />
         <Route
           path="/upload"
-          element={isAdmin ? <Upload /> : <Navigate to="/videos" replace />}
+          element={auth ? <Upload /> : <Navigate to="/login" replace />}
         />
         {/* making sure that users already logged in are unable to signup or login*/}
         <Route path="/signup" element={auth ? <Navigate to="/welcome" /> : <Signup />} /> 

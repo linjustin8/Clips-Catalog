@@ -5,8 +5,8 @@ import axios from "axios";
 import useClipUpload from "./useClipUpload";
 import { compressVideo, MAX_VIDEO_BYTES } from "../utils/compressVideo";
 
-vi.mock("./useAuth", () => ({ default: () => ({ accessToken: "test-token" }) }));
-vi.mock("./usePermissions", () => ({ default: () => ({ isAdmin: true }) }));
+const auth = vi.hoisted(() => ({ accessToken: "test-token" as string | null, user: { roles: ["Viewer"] } }));
+vi.mock("./useAuth", () => ({ default: () => auth }));
 vi.mock("../utils/compressVideo", async (importOriginal) => ({
   ...await importOriginal<typeof import("../utils/compressVideo")>(), compressVideo: vi.fn(),
 }));
@@ -18,6 +18,7 @@ const params = { file: source, title: " Clip ", categories: ["gameplay"] };
 
 beforeEach(() => {
   vi.resetAllMocks();
+  auth.accessToken = "test-token";
   vi.mocked(compressVideo).mockResolvedValue(compressed);
   vi.mocked(axios.post).mockResolvedValueOnce({ data: {
     uploadUrl: "https://s3.test/upload", key: "clips/test/clip.mp4",
@@ -27,8 +28,9 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
-it("uploads the prepared bytes and metadata and then saves the clip", async () => {
+it("allows a regular Viewer to upload the prepared bytes and save the clip", async () => {
   const { result } = renderHook(useClipUpload);
+  expect(result.current.canUpload).toBe(true);
   await act(async () => { await result.current.uploadClip(params); });
   expect(axios.post).toHaveBeenNthCalledWith(1, "/api/clips/upload-url", {
     filename: "clip.mp4", contentType: "video/mp4", fileSize: compressed.size,
@@ -39,6 +41,18 @@ it("uploads the prepared bytes and metadata and then saves the clip", async () =
   }, expect.any(Object));
   expect(result.current.status).toBe("success");
   expect(result.current.compressionSizes).toEqual({ original: source.size, compressed: compressed.size });
+});
+
+it("requires sign-in before compression or upload", async () => {
+  auth.accessToken = null;
+  const { result } = renderHook(useClipUpload);
+  expect(result.current.canUpload).toBe(false);
+  await act(async () => {
+    await expect(result.current.uploadClip(params)).rejects.toThrow("must be signed in");
+  });
+  expect(compressVideo).not.toHaveBeenCalled();
+  expect(axios.post).not.toHaveBeenCalled();
+  expect(axios.put).not.toHaveBeenCalled();
 });
 
 it("normalizes a missing MKV MIME type without claiming smaller files were compressed", async () => {

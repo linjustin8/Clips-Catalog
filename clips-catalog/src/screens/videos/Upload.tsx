@@ -1,18 +1,16 @@
 // Upload.tsx
 import React from "react";
-import usePermissions from "../../hooks/usePermissions";
+import { useNavigate } from "react-router-dom";
+
+const UploadModal = React.lazy(() => import("../../components/upload/UploadModal"));
 
 const Upload: React.FC = () => {
-  const { isAdmin } = usePermissions();
-
-  if (!isAdmin) {
-    return <div>You do not have permission to upload videos.</div>;
-  }
+  const navigate = useNavigate();
 
   return (
-    <>
-      <h1>Upload</h1>
-    </>
+    <React.Suspense fallback={null}>
+      <UploadModal open onClose={() => navigate("/videos")} />
+    </React.Suspense>
   );
 };
 

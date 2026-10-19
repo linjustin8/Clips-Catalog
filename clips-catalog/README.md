@@ -2,6 +2,10 @@
 
 ## Video uploads
 
+Any signed-in account can upload from the navigation bar, account menu, or
+`/upload` page. Both upload endpoints require authentication; no administrator
+role is needed. Clips remain associated with the uploader's account.
+
 Files larger than 100 MiB (displayed as 100 MB) are compressed in a browser worker
 before requesting an S3 upload URL. Smaller files keep their original bytes.
 Compression produces H.264/AAC MP4 at up to 1080p, preserving orientation, aspect

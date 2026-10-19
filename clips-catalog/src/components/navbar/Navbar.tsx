@@ -3,7 +3,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import usePermissions from "../../hooks/usePermissions";
 import { DropdownMenu } from "./Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faUser } from "@fortawesome/free-solid-svg-icons";
@@ -16,7 +15,6 @@ const UploadModal = React.lazy(() => import("../upload/UploadModal"));
 
 const Navbar: React.FC = () => {
   const { user } = useAuth();
-  const { isAdmin } = usePermissions();
   const location = useLocation();
   const navigate = useNavigate();
   const currentPage = location.pathname;
@@ -84,7 +82,7 @@ const Navbar: React.FC = () => {
             navigate("/about");
           }}
         />
-        {isAdmin && (
+        {user && (
           <li className="admin-upload-container">
             <button
               type="button"
