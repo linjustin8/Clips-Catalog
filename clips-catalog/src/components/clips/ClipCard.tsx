@@ -48,6 +48,7 @@ const ClipCard = ({ clip, onClick }: ClipCardProps) => {
           sx={{
             position: "relative",
             aspectRatio: "16 / 9",
+            flexShrink: 0,
             overflow: "hidden",
             bgcolor: "#110f27",
           }}
@@ -125,7 +126,7 @@ const ClipCard = ({ clip, onClick }: ClipCardProps) => {
           </Box>
         </Box>
 
-        <CardContent sx={{ width: "100%", flexGrow: 1, p: 2 }}>
+        <CardContent sx={{ width: "100%", flexGrow: 1, display: "flex", flexDirection: "column", p: 2 }}>
           <Typography noWrap sx={{ fontWeight: 700, mb: 1 }}>
             {clip.title}
           </Typography>
@@ -144,7 +145,7 @@ const ClipCard = ({ clip, onClick }: ClipCardProps) => {
               />
             ))}
           </Stack>
-          <Typography variant="caption" sx={{ display: "block", mt: 1.25, color: "text.secondary" }}>
+          <Typography variant="caption" sx={{ display: "block", mt: "auto", pt: 1.25, alignSelf: "flex-start", color: "text.secondary" }}>
             {new Date(clip.uploadDate).toLocaleDateString()}
           </Typography>
         </CardContent>
